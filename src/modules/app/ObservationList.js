@@ -60,6 +60,7 @@ import RNPicker from "rn-modal-picker";
 //import { MessageBar } from 'react-native-messages';
 //import { showMessage } from 'react-native-messages';
 import ImagePicker from 'react-native-image-picker';
+import NetInfo from "@react-native-community/netinfo";
 
 class ObservationList extends React.Component {
 	static get options() {
@@ -220,19 +221,21 @@ class ObservationList extends React.Component {
 
 	async componentDidAppear() {
 		this.GetTime()
-		await this.requestLocationPermission().then(()=>{
-		Geolocation.getCurrentPosition(
-			(position) => {
-				this.setState({ location: position })
-				//Alert.alert(String(this.state.location.coords.longitude))
-				console.log(position);
-			},
-			(error) => {
-				// See error code charts below.
-				Alert.alert(error.code, error.message);
-			},
-			{ enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-		);})
+		await this.requestLocationPermission().then(() => {
+			Geolocation.getCurrentPosition(
+				(position) => {
+					this.setState({ location: position })
+					//Alert.alert(String(this.state.location.coords.longitude))
+					console.log(position);
+				},
+				(error) => {
+					// See error code charts below.
+					console.log('Error Location: ', error)
+					//Alert.alert(String(error.code), String(error.message));
+				},
+				{ enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+			);
+		})
 
 		/*navigator.geolocation.getCurrentPosition(
 			position => {
@@ -420,7 +423,7 @@ class ObservationList extends React.Component {
 													paddingVertical: 20
 												}}>
 												<Image
-													source={{ uri: this.props.newObservations[this.props.currentIndex].img }}
+													source={{ uri: this.props.newObservations[this.props.currentIndex].img.uri }}
 													style={{
 														height: '100%',
 														//width: '100%',
@@ -454,7 +457,7 @@ class ObservationList extends React.Component {
 														 * The second arg is the callback which sends object: response (more info in the API Reference)
 														 */
 														ImagePicker.launchImageLibrary(options, (response) => {
-															console.log('Response = ', response);
+															//console.log('Response = ', response);
 
 															if (response.didCancel) {
 																console.log('User cancelled image picker');
@@ -463,8 +466,18 @@ class ObservationList extends React.Component {
 															} else if (response.customButton) {
 																console.log('User tapped custom button: ', response.customButton);
 															} else {
+																console.log('Image Response: ', response)
 																const source = { uri: response.uri };
-																this.props.actions.addPhoto(response.uri, this.props.user)
+																this.props.actions.addPhoto(
+																	{
+																		uri: response.uri,
+																		fileName: response.fileName,
+																		fileSize: response.fileSize,
+																		type: response.type,
+																		path: response.path,
+																	},
+																	this.props.user
+																)
 																//Alert.alert('Image Picked', response.uri)
 																// You can also display the image using data:
 																// const source = { uri: 'data:image/jpeg;base64,' + response.data };
@@ -528,7 +541,16 @@ class ObservationList extends React.Component {
 																console.log('User tapped custom button: ', response.customButton);
 															} else {
 																const source = { uri: response.uri };
-																this.props.actions.addPhoto(response.uri, this.props.user)
+																this.props.actions.addPhoto(
+																	{
+																		uri: response.uri,
+																		fileName: response.fileName,
+																		fileSize: response.fileSize,
+																		type: response.type,
+																		path: response.path,
+																	},
+																	this.props.user
+																)
 																//Alert.alert('Image Picked', response.uri)
 																// You can also display the image using data:
 																// const source = { uri: 'data:image/jpeg;base64,' + response.data };
@@ -590,8 +612,8 @@ class ObservationList extends React.Component {
 													?
 													this.props.actions.addTimeandLoc(
 														this.state.time + this.state.date,
-														this.state.location.coords.longitude,
-														this.state.location.coords.latitude,
+														this.state.location !== null ? this.state.location.coords.longitude : 'Not Specified',
+														this.state.location !== null ? this.state.location.coords.latitude : 'Not Specified',
 														this.props.user,
 														this.props.currentIndex
 													)
@@ -1041,6 +1063,11 @@ class ObservationList extends React.Component {
 									>
 										<Form style={{ flex: 1, paddingRight: 3 }}>
 											<Textarea
+												onChangeText={(val) => {
+													this.setState({
+														note: val
+													})
+												}}
 												rowSpan={5}
 												bordered
 												placeholder="e.g. I was out on my boat"
@@ -1063,7 +1090,27 @@ class ObservationList extends React.Component {
 								<FooterTab style={{ backgroundColor: '#3F51B5' }}>
 									<Button
 										onPress={() => {
-											Navigation.popToRoot("AppStack")
+											//let newObj = JSON.parse(JSON.stringify(obj));
+											var newObservations = JSON.parse(JSON.stringify(this.props.newObservations))
+											newObservations[this.props.currentIndex].activity = {
+												type: this.state.selectedActivityName ? this.state.selectedActivityName : 'Not Specified',
+												note: this.state.note ? this.state.note : 'Not Specified'
+											}
+											NetInfo.fetch().then(state => {
+												console.log("Connection type", state.type);
+												console.log("Is connected?", state.isConnected);
+												this.setState({ isConnected: state.isConnected }, () => {
+													this.props.actions.uploadNewObservation(
+														state.isConnected,
+														this.props.user,
+														this.props.token,
+														newObservations,
+														this.props.currentIndex
+													)
+													Navigation.popToRoot("AppStack")
+													//this.props.actions.syncObservations(this.state.isConnected, this.props.user, this.props.token, this.props.newObservations)
+												})
+											});
 										}}
 									>
 										<Text style={{ color: 'white', fontSize: 16.5 }}>Submit</Text>
@@ -1085,6 +1132,7 @@ function mapStateToProps(state, ownProps) {
 		newObservations: state.appReducer.newObservations,
 		currentIndex: state.appReducer.currentIndex,
 		user: state.authReducer.user,
+		token: state.authReducer.token,
 		wantToAddPhoto: state.appReducer.wantToAddPhoto
 	};
 }

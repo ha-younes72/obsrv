@@ -113,8 +113,8 @@ export function signupUser(user, status) {
 					dispatch(signupUserSuccess({
 						user: {
 							email: user.email,
-							fname: res.data.meta.firstname,
-							lname: res.data.meta.lastname,
+							//fname: res.data.meta.firstname,
+							//lname: res.data.meta.lastname,
 							password: user.password
 						},
 						token: res.data.meta.token
@@ -124,14 +124,20 @@ export function signupUser(user, status) {
 				.catch(error => {
 					console.log("Error registering: ", error); //eslint-disable-line
 					//dispatch(signinUserFail(error.response));
-					Alert.alert('Server Error', 'We could not sing you up, You are offline, you can sync later')
-					dispatch(signupUserSuccess({ user, token: '' }));
-					_signupAsync(user)
+					Alert.alert(
+						'Server Error',
+						'We could not sing you up, you can try later. or You can Sign In and register later with same credentials'
+					)
+					//dispatch(signupUserSuccess({ user, token: '' }));
+					//_signupAsync(user)
 				});
 		} else {
-			Alert.alert('Offline', 'You are offline, you can sync when you are online')
-			dispatch(signupUserSuccess({ user, token: '' }));
-			_signupAsync(user)
+			Alert.alert(
+				'Offline',
+				'You are offline, you can Sign Up when you are online. or You can Sign In and register later with same credentials'
+			)
+			//dispatch(signupUserSuccess({ user, token: '' }));
+			//_signupAsync(user)
 		}
 	};
 }
@@ -140,7 +146,8 @@ _signupAsync = async (user) => {
 	await AsyncStorage.setItem('userToken', JSON.stringify(user))
 		.then(() => {
 			//console.log("The user has been stored locally")
-			goHome();
+			Alert.alert('Signed Up', 'You can Sign In now!')
+			//goHome();
 		})
 		.catch(err => {
 			Alert.alert('error: ', err);

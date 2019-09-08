@@ -1,5 +1,6 @@
 import * as types from '../../constants/actionTypes';
 import initialState from '../../reducers/initialState';
+import AsyncStorage from '@react-native-community/async-storage'
 
 export default function (state = initialState.app, action) {
 	switch (action.type) {
@@ -27,7 +28,7 @@ export default function (state = initialState.app, action) {
 		case types.ADD_TO_NEWOBSERVATIONS_SUCCESS:
 			return {
 				...state,
-				newObservations: [...state.newObservations, { img: action.imgUri }],
+				newObservations: [...state.newObservations, { img: action.img }],
 				currentIndex: state.currentIndex + 1,
 				wantToAddPhoto: true
 			}
@@ -109,6 +110,43 @@ export default function (state = initialState.app, action) {
 							human: state.newObservations[state.currentIndex].human ? state.newObservations[state.currentIndex].human : null
 						}].concat(state.newObservations.slice(state.currentIndex + 1))
 					)
+			}
+
+		case types.UPLOAD_NEW_OBSERVATION_SUCCESS:
+			//state.newObservations.splice(action.index, 1)
+			AsyncStorage
+				.setItem(
+					action.email, JSON.stringify({
+						...state,
+						observations: state.observations.concat(action.newObservation),
+						//currentIndex: state.currentIndex - 1,
+						newObservations: action.index === 0
+							?
+							[]
+							:
+							state.newObservations.slice(0, action.index)
+					}))
+			return {
+				...state,
+				observations: state.observations.concat(action.newObservation),
+				currentIndex: state.currentIndex - 1,
+				newObservations: action.index === 0
+					?
+					[]
+					:
+					state.newObservations.slice(0, action.index)
+			}
+
+		case types.UPLOAD_NEW_OBSERVATION_FAIL:
+			//state.newObservations[action.index] = action.newObservation
+			return {
+				...state,
+				//observations: state.observations.concat(action.newObservation),
+				newObservations: action.index === 0
+					?
+					[action.newObservation]
+					:
+					state.newObservations.slice(0, action.index).concat([action.newObservation])
 			}
 
 		default:

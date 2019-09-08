@@ -147,7 +147,7 @@ class Register extends React.Component {
 					>
 						<Input
 							onChangeText={val => this.onChangeText('email', val)}
-							placeholder='Mail'
+							placeholder='E-mail address'
 							value={this.state.email}
 							onBlur={() => {
 								this.setState({
@@ -193,7 +193,7 @@ class Register extends React.Component {
 
 					</Form>
 					<List style={{ paddingVertical: 15 }}>
-						<ListItem style={{ borderBottomWidth: 0 }}>
+						{/* <ListItem style={{ borderBottomWidth: 0 }}>
 							<CheckBox
 								checked={this.state.gpsPermission}
 								color={colors.primary}
@@ -222,7 +222,7 @@ class Register extends React.Component {
 							}}>
 								Camera
 							</Text>
-						</ListItem>
+						</ListItem> */}
 					</List>
 					<View style={{
 						//flex:1,

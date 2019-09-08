@@ -3,6 +3,7 @@ package com.awesomeproject;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rnfs.RNFSPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.wix.RNCameraKit.RNCameraKitPackage;
@@ -50,7 +51,8 @@ public class MainApplication extends NavigationApplication {
           new RNCameraKitPackage(),
           new RNFusedLocationPackage(),
           new NetInfoPackage(),
-          new ImagePickerPackage()
+          new ImagePickerPackage(),
+          new RNFSPackage()
         );
     }
   
@@ -72,6 +74,7 @@ public class MainApplication extends NavigationApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFSPackage(),
             new ImagePickerPackage(),
             new NetInfoPackage(),
             new RNCameraKitPackage(),

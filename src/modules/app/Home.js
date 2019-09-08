@@ -56,6 +56,7 @@ class Home extends React.Component {
 
 
   async componentDidMount() {
+    //AsyncStorage.removeItem(this.props.user.email)
     this.props.actions.retrieveObservations(this.props.status, this.props.user, this.props.token)
   }
 
@@ -86,7 +87,7 @@ class Home extends React.Component {
   render() {
 
     return (
-      !this.state.isLoading
+      this.state.isLoading
         ?
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Spinner large color="blue"></Spinner>
@@ -95,7 +96,7 @@ class Home extends React.Component {
         <StyleProvider style={getTheme(customVariables)}>
           <Container>
             {
-              ((this.props.observasions.length > 0) || (this.props.newObservasions.length > 0))
+              ((this.props.observations.length > 0) || (this.props.newObservations.length > 0))
                 ?
                 <Content
                   contentContainerStyle={{
@@ -103,45 +104,8 @@ class Home extends React.Component {
                     padding: 15,
                   }}>
                   <List>
-                    {this.props.observasions.map((data, i) => (
-                      <ListItem
-                        key={i}
-                        style={{
-                          marginLeft: 0,
-                          marginBottom: 10,
-                          paddingHorizontal: 10,
-                          borderRadius: 5,
-                          shadowColor: "#000",
-                          shadowOffset: {
-                            width: 0,
-                            height: 4,
-                          },
-                          shadowOpacity: 0.30,
-                          shadowRadius: 4.65,
-                          elevation: 4,
-                          borderRadius: 7,
-                        }}
-                        thumbnail
-                      >
-                        <Left>
-                          <Thumbnail square large size={120} source={data.img} />
-                        </Left>
-                        <Body style={{ paddingLeft: 10 }}>
-                          <Text style={{ paddingBottom: 4 }} numberOfLines={1}>{data.text}</Text>
-                          <Text numberOfLines={1} note>
-                            {data.time}
-                          </Text>
-                          <Text style={{ paddingBottom: 4 }} numberOfLines={1} note>
-                            {data.lon}  {data.lat}
-                          </Text>
-                          <TouchableOpacity>
-                            <Text style={{ color: 'blue' }} note >View More</Text>
-                          </TouchableOpacity>
-                        </Body>
-                        
-                      </ListItem>
-                    ))}
-                    {this.props.newObservasions.map((data, i) => (
+                    {this.props.observations.map((data, i) => (
+                      //data.sessionID = 81000,
                       <ListItem
                         key={i}
                         style={{
@@ -165,7 +129,47 @@ class Home extends React.Component {
                           <Thumbnail square large size={120} source={{ uri: data.img }} />
                         </Left>
                         <Body style={{ paddingLeft: 10 }}>
-                          <Text style={{ paddingBottom: 4 }} numberOfLines={1}>{data.text}</Text>
+                          <Text style={{ paddingBottom: 4 }} numberOfLines={1}>{data.sessionID}</Text>
+                          <Text numberOfLines={1} note>
+                          {/*data.date*/} {data.time}
+                          </Text>
+                          <Text style={{ paddingBottom: 4 }} numberOfLines={1} note>
+                            {data.lat} {data.lon}
+                          </Text>
+                          <TouchableOpacity>
+                            <Text style={{ color: 'blue' }} note >View More</Text>
+                          </TouchableOpacity>
+                        </Body>
+                        
+                      </ListItem>
+                    ))}
+                    {this.props.newObservations.map((data, i) => (
+                      data.sessionID = 81000,
+                      <ListItem
+                        key={i}
+                        style={{
+                          marginLeft: 0,
+                          marginBottom: 10,
+                          paddingHorizontal: 10,
+                          borderRadius: 5,
+                          shadowColor: "#000",
+                          shadowOffset: {
+                            width: 0,
+                            height: 4,
+                          },
+                          shadowOpacity: 0.30,
+                          shadowRadius: 4.65,
+                          elevation: 4,
+                          borderRadius: 7,
+                        }}
+                        thumbnail
+                      >
+                        
+                        <Left>
+                          <Thumbnail square large size={120} source={{ uri: data.img.uri }} />
+                        </Left>
+                        <Body style={{ paddingLeft: 10 }}>
+                          <Text style={{ paddingBottom: 4 }} numberOfLines={1}>{data.sessionID}</Text>
                           <Text numberOfLines={1} note>
                             {data.time}
                           </Text>
@@ -299,10 +303,11 @@ class Home extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    observasions: state.appReducer.observations,
-    newObservasions: state.appReducer.newObservations,
+    observations: state.appReducer.observations,
+    newObservations: state.appReducer.newObservations,
     status: state.authReducer.status,
     user: state.authReducer.user,
+    token: state.authReducer.token
   };
 }
 

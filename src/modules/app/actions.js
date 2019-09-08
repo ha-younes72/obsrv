@@ -6,28 +6,31 @@ import { ToastAndroid, Alert } from "react-native";
 import { Navigation } from 'react-native-navigation';
 import * as authActions from '../authentication/actions';
 import AsyncStorage from '@react-native-community/async-storage';
+//var FormData = require('form-data');
+//var fs = require('fs');
+var RNFS = require('react-native-fs');
 
-
-export function addPhotoSuccess(imgUri) {
+export function addPhotoSuccess(img) {
 	return {
 		type: types.ADD_TO_NEWOBSERVATIONS_SUCCESS,
-		imgUri: imgUri
+		img: img,
+		//imgData: imgData
 	}
 }
-
 export function addPhoto(img, user) {
 	return async function (dispatch) {
+		//AsyncStorage.removeItem(user.email)
 		const jdata = await AsyncStorage.getItem(user.email);
 		var data = JSON.parse(jdata)
 		console.log('data: ', data)
 		if (data === null) {
 			await AsyncStorage.setItem(user.email, JSON.stringify({
 				newObservations: [{
-					img: img
+					img: img,
 				}]
 			}))
 				.then(() => {
-					console.log("The observation has been stored locallkky")
+					console.log("The observation has been stored locally")
 					dispatch(addPhotoSuccess(img));
 					//goHome();
 				})
@@ -69,7 +72,6 @@ export function addTimeandLocSuccess(time, lon, lat) {
 		lat: lat
 	}
 }
-
 export function addTimeandLoc(time, lon, lat, user, currentIndex) {
 	return async function (dispatch) {
 		//AsyncStorage.removeItem(user.email)
@@ -104,47 +106,6 @@ export function addTimeandLoc(time, lon, lat, user, currentIndex) {
 		}
 
 		dispatch(addTimeandLocSuccess(time, lon, lat));
-	};
-}
-
-export function addHumanstoNewObservationSuccess(human) {
-	return {
-		type: types.ADD_HUMANS_TO_NEWOBSERVATIONS_SUCCESS,
-		human: human
-	}
-}
-
-export function addHumanstoNewObservation(human, user, currentIndex) {
-	return async function (dispatch) {
-		const jdata = await AsyncStorage.getItem(user.email);
-
-		var data = JSON.parse(jdata)
-		if (currentIndex === 0) {
-			data.newObservations = [{
-				img: data.newObservations[0].img,
-				time: data.newObservations[0].time,
-				lon: data.newObservations[0].lon,
-				lat: data.newObservations[0].lat,
-				text: String(human[0].num) + ' ' + human[0].species,
-				human: human,
-				animal: data.newObservations[0].animal ? data.newObservations[0].animal : null
-			}]
-			await AsyncStorage.setItem(user.email, JSON.stringify(data))
-		} else {
-			data.newObservations = data.newObservations.slice(0, currentIndex).concat(
-				[{
-					img: data.newObservations[currentIndex].img,
-					time: data.newObservations[currentIndex].time,
-					lon: data.newObservations[currentIndex].lon,
-					lat: data.newObservations[currentIndex].lat,
-					text: String(human[0].num) + ' ' + human[0].species,
-					human: human,
-					animal: data.newObservations[currentIndex].animal ? data.newObservations[currentIndex].animal : null
-				}].concat(data.newObservations.slice(currentIndex + 1))
-			)
-			await AsyncStorage.setItem(user.email, JSON.stringify(data))
-		}
-		dispatch(addHumanstoNewObservationSuccess(human));
 	};
 }
 
@@ -187,6 +148,48 @@ export function addAnimalstoNewObservation(animal, user, currentIndex) {
 	};
 }
 
+export function addHumanstoNewObservationSuccess(human) {
+	return {
+		type: types.ADD_HUMANS_TO_NEWOBSERVATIONS_SUCCESS,
+		human: human
+	}
+}
+export function addHumanstoNewObservation(human, user, currentIndex) {
+	return async function (dispatch) {
+		const jdata = await AsyncStorage.getItem(user.email);
+
+		var data = JSON.parse(jdata)
+		if (currentIndex === 0) {
+			data.newObservations = [{
+				img: data.newObservations[0].img,
+				time: data.newObservations[0].time,
+				lon: data.newObservations[0].lon,
+				lat: data.newObservations[0].lat,
+				text: String(human[0].num) + ' ' + human[0].species,
+				human: human,
+				animal: data.newObservations[0].animal ? data.newObservations[0].animal : null
+			}]
+			await AsyncStorage.setItem(user.email, JSON.stringify(data))
+		} else {
+			data.newObservations = data.newObservations.slice(0, currentIndex).concat(
+				[{
+					img: data.newObservations[currentIndex].img,
+					time: data.newObservations[currentIndex].time,
+					lon: data.newObservations[currentIndex].lon,
+					lat: data.newObservations[currentIndex].lat,
+					text: String(human[0].num) + ' ' + human[0].species,
+					human: human,
+					animal: data.newObservations[currentIndex].animal ? data.newObservations[currentIndex].animal : null
+				}].concat(data.newObservations.slice(currentIndex + 1))
+			)
+			await AsyncStorage.setItem(user.email, JSON.stringify(data))
+		}
+		dispatch(addHumanstoNewObservationSuccess(human));
+	};
+}
+
+
+
 // Signin User
 export function retrieveNewObservationsSuccess(res, index) {
 	return {
@@ -208,19 +211,30 @@ export function retrieveObservations(status, user, token) {
 		if (status) {
 			//online
 
-			//console.log(API_URL + 'observations')
+			//console.log(API_URL + 'sessionObservations?id=81000')
 			var config = {
 				headers: { 'Authorization': token }
 			};
 
-			var bodyParameters = {
+			// var bodyParameters = {
 
-			};
-			axios.get(API_URL + 'observations', bodyParameters, config)
-				.then(res => {
-					console.log('Observations: ', res)
-					dispatch(retrieveObservationsSuccess(res.meta));
-					_saveObservations(res.meta, user)
+			// };
+			axios.get(API_URL + 'sessionObservations?id=81000', config)
+				.then(async (res) => {
+					console.log('Observations: ', res.data.meta)
+					dispatch(retrieveObservationsSuccess(res.data.meta));
+					//await AsyncStorage.removeItem(user.email)
+					const jdata = await AsyncStorage.getItem(user.email)
+					const data = JSON.parse(jdata)
+					console.log('Load Obsrv: ', data)
+					if (data === null) {
+						//Alert.alert('No local data', 'You have no observations, you can add one by pressing Log.')
+					} else {
+						if (data.newObservations) {
+							dispatch(retrieveNewObservationsSuccess(data.newObservations, data.newObservations.length - 1))
+						}
+					}
+					_saveObservations(res.data.meta, user)
 					//goHome();
 				})
 				.catch(async (error) => {
@@ -230,6 +244,7 @@ export function retrieveObservations(status, user, token) {
 					const data = JSON.parse(jdata)
 					console.log('Load Obsrv: ', data)
 					if (data === null) {
+						dispatch(retrieveObservationsSuccess([]))
 						Alert.alert('No local data', 'You have no observations, you can add one by pressing Log.')
 					} else {
 						if (data.observations) {
@@ -248,6 +263,7 @@ export function retrieveObservations(status, user, token) {
 			//_loadObservations(user)
 			const jdata = await AsyncStorage.getItem(user.email)
 			if (jdata === null) {
+				dispatch(retrieveObservationsSuccess([]))
 				Alert.alert('No local data', 'You have no observations, you can add one by pressing Log.')
 			} else {
 				const data = JSON.parse(jdata)
@@ -266,12 +282,14 @@ export function retrieveObservations(status, user, token) {
 }
 
 async function _saveObservations(data, user) {
+	console.log('I am saving')
 	const jdata = await AsyncStorage.getItem(user.email)
 	if (jdata !== null) {
 		const ndata = JSON.parse(jdata)
 		if (ndata.newObservations) {
 			await AsyncStorage.setItem(user.email, JSON.stringify({ observations: data, newObservations: ndata.newObservations }))
 				.then(() => {
+					console.log('I have saved 1')
 				})
 				.catch(err => {
 					console.log('error:', err);
@@ -279,6 +297,7 @@ async function _saveObservations(data, user) {
 		} else {
 			await AsyncStorage.setItem(user.email, JSON.stringify({ observations: data }))
 				.then(() => {
+					console.log('I have saved 2')
 				})
 				.catch(err => {
 					console.log('error:', err);
@@ -287,6 +306,7 @@ async function _saveObservations(data, user) {
 	} else {
 		await AsyncStorage.setItem(user.email, JSON.stringify({ observations: data }))
 			.then(() => {
+				console.log('I have saved 3')
 			})
 			.catch(err => {
 				console.log('error:', err);
@@ -295,12 +315,59 @@ async function _saveObservations(data, user) {
 }
 
 async function _saveSyncObservations(data, user) {
-	await AsyncStorage.setItem(user.email, JSON.stringify({ observations: data }))
+	const saved = await AsyncStorage.getItem(user.email)
+	const savedJson = JSON.parse(saved)
+	await AsyncStorage
+		.setItem(
+			user.email,
+			JSON.stringify(
+				!savedJson.newObservations ? {
+					observations: data
+				} : {
+						observations: data,
+						newObservations: savedJson.newObservations
+					}
+			))
 		.then(() => {
 		})
 		.catch(err => {
 			console.log('error:', err);
 		})
+}
+
+async function _saveSyncedObservation(data, index, user) {
+	
+	const saved = await AsyncStorage.getItem(user.email)
+	var savedJson = JSON.parse(saved)
+	if (savedJson.observations) {
+		savedJson.observations = savedJson.observations.concat([data])
+		const length = savedJson.newObservations.length
+		savedJson.newObservations = index === 0 ?
+			[] :
+			index === length - 1 ?
+				savedJson.newObservations.slice(0, length - 1) :
+				savedJson.newObservations.slice(0, index).concat(savedJson.newObservations.slice(index + 1, length))
+		await AsyncStorage.setItem(user.email, JSON.stringify(savedJson))
+			.then(() => {
+			})
+			.catch(err => {
+				console.log('error:', err);
+			})
+	} else {
+		savedJson.observations = [data]
+		const length = savedJson.newObservations.length
+		savedJson.newObservations = index === 0 ?
+			[] :
+			index === length - 1 ?
+				savedJson.newObservations.slice(0, length - 1) :
+				savedJson.newObservations.slice(0, index).concat(savedJson.newObservations.slice(index + 1, length))
+		await AsyncStorage.setItem(user.email, JSON.stringify(savedJson))
+			.then(() => {
+			})
+			.catch(err => {
+				console.log('error:', err);
+			})
+	}
 }
 
 export function syncObservationsSuccess(res) {
@@ -318,31 +385,107 @@ export function syncObservations(status, user, token, newObservations) {
 				headers: { 'Authorization': token }
 			};
 
-			var bodyParameters = {
-
-			};
-			axios.get(API_URL + 'observations', bodyParameters, config)
-				.then(res => {
+			axios.get(API_URL + 'sessionObservations?id=81000', config)
+				.then(async (res) => {
 					console.log('Observations: ', res)
-					var config = {
-						headers: { 'Authorization': token }
-					};
+					await _saveSyncObservations(res.data.meta, user)
+						.then(resSync => {
+							newObservations.map((newObservation, currentIndex) => {
+								console.log('Obsrv to be uploaded: ', newObservation)
+								RNFS
+									.stat(newObservation.img.path)
+									.then(statRes => {
+										console.log('Stat Result: ', statRes)
+									})
+									.catch(err => {
+										console.log('Stat Err: ', err)
+									})
+								var uploadUrl = API_URL + 'observation';
 
-					var bodyParameters = {
-						data: newObservations
-					};
+								var files = [{
+									name: 'photoFile',
+									filename: newObservation.img.fileName,
+									filepath: newObservation.img.path,
+									filetype: newObservation.img.type
+								}];
 
-					axios.put(API_URL + 'observations', bodyParameters, config)
-						.then(res2 => {
-							console.log('Observations: ', res2)
-							dispatch(syncObservationsSuccess(res2.meta.concat(newObservations)));
-							_saveSyncObservations(res2.meta.concat(newObservations), user)
+								var uploadBegin = (response) => {
+									var jobId = response.jobId;
+									console.log('UPLOAD HAS BEGUN! JobId: ' + jobId);
+								};
+
+								var uploadProgress = (response) => {
+									var percentage = Math.floor((response.totalBytesSent / response.totalBytesExpectedToSend) * 100);
+									console.log('UPLOAD IS ' + percentage + '% DONE!');
+								};
+
+								// upload files
+								RNFS.uploadFiles({
+									toUrl: uploadUrl,
+									files: files,
+									method: 'PUT',
+									headers: {
+										//'Accept': 'application/json',
+										'Authorization': token
+									},
+									fields:
+									{
+										sessionID: JSON.stringify(newObservation.sessionID),
+										//userID: 11,
+										animal: JSON.stringify(newObservation.animal),
+										human: JSON.stringify(newObservation.human),
+										activity: JSON.stringify(newObservation.activity),
+										text: newObservation.text,
+										lat: JSON.stringify(newObservation.lat),
+										lon: JSON.stringify(newObservation.lon),
+										time: newObservation.time,
+									},
+									begin: uploadBegin,
+									progress: uploadProgress
+								}).promise.then((response) => {
+									if (response.statusCode == 200) {
+										console.log('FILES UPLOADED!', JSON.parse(response.body)); // response.statusCode, response.headers, response.body
+										//newObservation.img = newObservation.img.uri
+										dispatch(uploadNewObservationSuccess({ ...newObservation, img: newObservation.img.uri }, currentIndex, user.email))
+										Alert.alert('Success', 'Observation Uploaded!')
+										//return ({ newObservation: { ...newObservation, img: newObservation.img.uri }, index: currentIndex})
+										//console.log('Put New Response: ', response)
+									} else {
+										dispatch(uploadNewObservationFail(newObservation, currentIndex))
+										Alert.alert('SERVER ERROR', JSON.stringify(response))
+										console.log('SERVER ERROR');
+									}
+								})
+									.catch((err) => {
+										if (err.description === "cancelled") {
+											console.log('Upload Cancelled')
+											// cancelled by user
+										}
+										dispatch(uploadNewObservationFail(newObservation, currentIndex))
+										Alert.alert('ERROR', JSON.stringify(err))
+										console.log('Err Uploading: ', err);
+									});
+
+								/*
+								axios.put(API_URL + 'observation', bodyParameters, config)
+									.then(res2 => {
+										console.log('Sync Res2: ', res2)
+										dispatch(syncObservationsSuccess(res2.data.meta.concat(newObservations)));
+										_saveSyncObservations(res2.data.meta.concat(newObservations), user)
+									})
+									.catch(error => {
+										console.log('Sync Error: ', error)
+										Alert.alert('Server Err', 'We could not upload the new observations.')
+										dispatch(retrieveObservationsSuccess(res.data.meta))
+										_saveObservations(res.data.meta, user)
+									});
+									*/
+							})
 						})
-						.catch(async (error) => {
-							Alert.alert('Server Err', 'We could not upload the new observations.')
-							dispatch(retrieveObservationsSuccess(res.meta))
-							_saveObservations(res.meta, user)
-						});
+						.catch(errSync => {
+							console.log('We could not save the observations', errSync)
+							Alert.alert('Save Err', 'We could not save the retrieved observations.')
+						})
 					//goHome();
 				})
 				.catch(async (error) => {
@@ -352,5 +495,196 @@ export function syncObservations(status, user, token, newObservations) {
 			Alert.alert('Offline', 'You can try later. you are offline')
 		}
 
+	}
+}
+
+export function uploadNewObservationSuccess(obsrv, index, email) {
+	return {
+		type: types.UPLOAD_NEW_OBSERVATION_SUCCESS,
+		newObservation: obsrv,
+		index: index,
+		email: email
+	}
+}
+
+export function uploadNewObservationFail(obsrv, index) {
+	return {
+		type: types.UPLOAD_NEW_OBSERVATION_FAIL,
+		newObservation: obsrv,
+		index: index
+	}
+}
+
+export function uploadNewObservation(status, user, token, newObservations, currentIndex) {
+	return function (dispatch) {
+		if (status) {
+
+			console.log('Obsrv to be uploaded: ', newObservations[currentIndex])
+			RNFS
+				.stat(newObservations[currentIndex].img.path)
+				.then(statRes => {
+					console.log('Stat Result: ', statRes)
+				})
+				.catch(err => {
+					console.log('Stat Err: ', err)
+				})
+			var uploadUrl = API_URL + 'observation';
+
+			var files = [{
+				name: 'photoFile',
+				filename: newObservations[currentIndex].img.fileName,
+				filepath: newObservations[currentIndex].img.path,
+				filetype: newObservations[currentIndex].img.type
+			}];
+
+			var uploadBegin = (response) => {
+				var jobId = response.jobId;
+				console.log('UPLOAD HAS BEGUN! JobId: ' + jobId);
+			};
+
+			var uploadProgress = (response) => {
+				var percentage = Math.floor((response.totalBytesSent / response.totalBytesExpectedToSend) * 100);
+				console.log('UPLOAD IS ' + percentage + '% DONE!');
+			};
+
+			// upload files
+			RNFS.uploadFiles({
+				toUrl: uploadUrl,
+				files: files,
+				method: 'PUT',
+				headers: {
+					//'Accept': 'application/json',
+					'Authorization': token
+				},
+				fields:
+				{
+					sessionID: JSON.stringify(newObservations[currentIndex].sessionID),
+					//userID: 11,
+					animal: JSON.stringify(newObservations[currentIndex].animal),
+					human: JSON.stringify(newObservations[currentIndex].human),
+					activity: JSON.stringify(newObservations[currentIndex].activity),
+					text: newObservations[currentIndex].text,
+					lat: JSON.stringify(newObservations[currentIndex].lat),
+					lon: JSON.stringify(newObservations[currentIndex].lon),
+					time: newObservations[currentIndex].time,
+				},
+				begin: uploadBegin,
+				progress: uploadProgress
+			}).promise.then((response) => {
+				if (response.statusCode == 200) {
+					console.log('FILES UPLOADED!', JSON.parse(response.body)); // response.statusCode, response.headers, response.body
+					newObservations[currentIndex].img = newObservations[currentIndex].img.uri
+					dispatch(uploadNewObservationSuccess(newObservations[currentIndex], currentIndex, user.email))
+					//_saveSyncedObservation(newObservations[currentIndex], currentIndex, user)
+					Alert.alert('Success', 'Observation Uploaded!')
+					//console.log('Put New Response: ', response)
+				} else {
+					dispatch(uploadNewObservationFail(newObservations[currentIndex], currentIndex))
+					Alert.alert('SERVER ERROR', JSON.stringify(response))
+					console.log('SERVER ERROR');
+				}
+			})
+				.catch((err) => {
+					if (err.description === "cancelled") {
+						console.log('Upload Cancelled')
+						// cancelled by user
+					}
+					dispatch(uploadNewObservationFail(newObservations[currentIndex], currentIndex))
+					Alert.alert('ERROR', JSON.stringify(err))
+					console.log('Err Uploading: ', err);
+				});
+			//console.log('Token: ', token)
+			/*var config = {
+				headers: {
+					'Authorization': token,
+					Accept: "application/json",
+					//"Content-Type": "multipart/form-data",
+				}
+			};
+			var data = new FormData();
+			Object.entries(newObservations[currentIndex]).map(([key, value]) => {
+				//console.log('Key: ', key)
+				//console.log('Value: ', value)
+				if (key === 'img') {
+					data.append('photoFile',
+						{ uri: value, });
+				} else {
+					data.append(key, value)
+				}
+			});
+	
+			console.log('FormData: ', data)
+	
+			var bodyParameters = {
+				data: data
+			}
+			*/
+
+			/*var form = new FormData();
+	
+			Object.entries(newObservations[currentIndex]).map(([key, value]) => {
+				//console.log('Key: ', key)
+				//console.log('Value: ', value)
+				if (key === 'img') {
+					const stream = value//fs.createReadStream(value);
+					form.append('photoFile', stream);
+				} else {
+					form.append(key, value)
+				}
+			});
+	
+			console.log('FormData: ', form)
+	
+			// In Node.js environment you need to set boundary in the header field 'Content-Type' by calling method `getHeaders`
+			const formHeaders = form.getHeaders();
+	
+			axios.put(API_URL + 'observation', form, {
+				headers: {
+					'Authorization': token,
+					...formHeaders,
+				},
+			})
+				.then(response => {
+					console.log('Upload Response: ', response)
+				})
+				.catch(error => {
+					console.log('Upload Error: ', error)
+				})
+			*/
+			/*fetch(API_URL + 'observation', {
+				method: "put",
+				headers: {
+					Accept: "application/x-www-form-urlencoded",
+					Authorization: token,
+				},
+				body: bodyParameters,
+			}).then(res => res.json())
+				.then(res => {
+					Alert.alert(
+						"Success",
+						"Bill of Loading Uploaded Successfully!"
+					);
+					dispatch(uploadNewObservationSuccess(newObservations[currentIndex], currentIndex))
+					console.log('Put New Response: ', res)
+				})
+				.catch(err => {
+					dispatch(uploadNewObservationFail(newObservations[currentIndex], currentIndex))
+					//console.log('Put New Error: ', error.response ? error.response : error)
+					console.error("error uploading images: ", err);
+				});
+				*/
+			/*axios.put(API_URL + 'observation', bodyParameters, config)
+				.then(response => {
+					dispatch(uploadNewObservationSuccess(newObservations[currentIndex], currentIndex))
+					console.log('Put New Response: ', response)
+				})
+				.catch(error => {
+					dispatch(uploadNewObservationFail(newObservations[currentIndex], currentIndex))
+					console.log('Put New Error: ', error.response ? error.response : error)
+				});*/
+		} else {
+			dispatch(uploadNewObservationFail(newObservations[currentIndex], currentIndex))
+			Alert.alert('Offline', 'You can sync later')
+		}
 	}
 }

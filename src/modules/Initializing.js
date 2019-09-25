@@ -6,7 +6,8 @@ import {
   StyleSheet,
   PermissionsAndroid,
   //AsyncStorage,
-  Alert
+  Alert,
+  ImageBackground
 } from 'react-native'
 
 import { goToAuth } from '../utils/navigation'
@@ -45,7 +46,8 @@ class Initialising extends Component {
   }
 
   async componentDidMount() {
-   // await this.requestInternetPermission().then(()=>{
+    //await AsyncStorage.removeItem('userToken')
+    // await this.requestInternetPermission().then(()=>{
     //NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     NetInfo.fetch().then(state => {
       console.log("Connection type", state.type);
@@ -83,9 +85,11 @@ class Initialising extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ProgressBar />
-      </View>
+      <ImageBackground source={require('../../images/initBack.jpg')} style={{width:'100%', height:'100%'}} >
+        <View style={styles.container}>
+          <ProgressBar />
+        </View>
+      </ImageBackground>
     )
   }
 }

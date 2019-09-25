@@ -9,8 +9,11 @@ import Initializing from './modules/Initializing'
 import Home from './modules/app/Home';
 import ObservationList from './modules/app/ObservationList';
 import Camera from './modules/app/CameraWix';
+import AccountDetails from './modules/app/AccountDetails'
 //import Gallery from './modules/app/GalleryView';
 import Auth from './modules/authentication/Auth'
+import LogIn from './modules/authentication/LogIn'
+import SignUp from './modules/authentication/SignUp'
 
 export function registerScreens(store, persistor) {
 
@@ -30,6 +33,22 @@ export function registerScreens(store, persistor) {
         </Provider>
     ), () => Auth);
 
+    Navigation.registerComponent('app.LogIn', () => (props) => (
+        <Provider store={store}>
+            <PersistGate persistor={persistor}>
+                <LogIn {...props} />
+            </PersistGate>
+        </Provider>
+    ), () => LogIn);
+
+    Navigation.registerComponent('app.SignUp', () => (props) => (
+        <Provider store={store}>
+            <PersistGate persistor={persistor}>
+                <SignUp {...props} />
+            </PersistGate>
+        </Provider>
+    ), () => SignUp);
+
     Navigation.registerComponent('app.Home', () => (props) => (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
@@ -39,6 +58,16 @@ export function registerScreens(store, persistor) {
             </PersistGate>
         </Provider>
     ), () => Home);
+    
+    Navigation.registerComponent('app.AccountDetails', () => (props) => (
+        <Provider store={store}>
+            <PersistGate persistor={persistor}>
+                <Root>
+                    <AccountDetails {...props} />
+                </Root>
+            </PersistGate>
+        </Provider>
+    ), () => AccountDetails);
 
     Navigation.registerComponent('app.ObservationList', () => (props) => (
         <Provider store={store}>

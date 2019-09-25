@@ -25,6 +25,29 @@ export default function (state = initialState.app, action) {
 				observations: action.observations
 			}
 
+		case types.ADD_TEMP_OBSERVATION_SUCCESS:
+			return {
+				...state,
+				tempObservation: { activity: action.obsrv }
+			}
+
+		case types.ADD_IMG_TIME_LOCATION_SUCCESS:
+			return {
+				...state,
+				tempObservation: { ...state.tempObservation, ...action.img }
+			}
+
+		case types.ADD_ANIMALS_SUCCESS:
+			return {
+				...state,
+				tempObservation: { ...state.tempObservation, animal: action.animal }
+			}
+		case types.ADD_HUMANS_SUCCESS:
+			return {
+				...state,
+				tempObservation: { ...state.tempObservation, human: action.human }
+			}
+
 		case types.ADD_TO_NEWOBSERVATIONS_SUCCESS:
 			return {
 				...state,
@@ -117,14 +140,15 @@ export default function (state = initialState.app, action) {
 			AsyncStorage
 				.setItem(
 					action.email, JSON.stringify({
-						...state,
+						//...state,
 						observations: state.observations.concat(action.newObservation),
+						//newObservations: state.newObservations
 						//currentIndex: state.currentIndex - 1,
 						newObservations: action.index === 0
 							?
 							[]
 							:
-							state.newObservations.slice(0, action.index)
+							state.newObservations.slice(0, action.index).concat(state.newObservations.slice(action.index + 1, state.newObservations.length))
 					}))
 			return {
 				...state,
@@ -134,19 +158,46 @@ export default function (state = initialState.app, action) {
 					?
 					[]
 					:
-					state.newObservations.slice(0, action.index)
+					state.newObservations.slice(0, action.index).concat(state.newObservations.slice(action.index + 1, state.newObservations.length))
 			}
 
 		case types.UPLOAD_NEW_OBSERVATION_FAIL:
 			//state.newObservations[action.index] = action.newObservation
 			return {
 				...state,
+				//newObservations: state.newObservations.concat(action.newObservation),
+				//currentIndex: state.currentIndex + 1
 				//observations: state.observations.concat(action.newObservation),
-				newObservations: action.index === 0
+				/*newObservations: action.index === 0
 					?
 					[action.newObservation]
 					:
-					state.newObservations.slice(0, action.index).concat([action.newObservation])
+					state.newObservations.slice(0, action.index).concat([action.newObservation])*/
+			}
+
+		case types.UPLOAD_TEMP_OBSERVATION_SUCCESS:
+			AsyncStorage
+				.setItem(
+					action.email, JSON.stringify({
+						observations: state.observations.concat(action.newObservation),
+						newObservations: state.newObservations
+					}))
+			return {
+				...state,
+				observations: state.observations.concat(action.newObservation)
+			}
+
+		case types.UPLOAD_TEMP_OBSERVATION_FAIL:
+			AsyncStorage
+				.setItem(
+					action.email, JSON.stringify({
+						observations: state.observations,
+						newObservations: state.newObservations.concat(action.newObservation)
+					}))
+			return {
+				...state,
+				newObservations: state.newObservations.concat(action.newObservation),
+				currentIndex: state.currentIndex + 1
 			}
 
 		default:

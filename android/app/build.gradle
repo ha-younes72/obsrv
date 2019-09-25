@@ -102,7 +102,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.awesomeproject"
+        applicationId "com.eo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5" // See note below!

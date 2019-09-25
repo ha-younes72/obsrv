@@ -11,7 +11,8 @@ import {
 	Alert,
 	Image,
 	PermissionsAndroid,
-	StyleSheet
+	StyleSheet,
+	TextInput
 	//AsyncStorage,
 	//Button
 } from 'react-native';
@@ -37,6 +38,7 @@ import {
 	Input,
 	Item,
 	Form,
+	Thumbnail,
 	Textarea
 } from 'native-base'
 import AsyncStorage from '@react-native-community/async-storage'
@@ -61,6 +63,9 @@ import RNPicker from "rn-modal-picker";
 //import { showMessage } from 'react-native-messages';
 import ImagePicker from 'react-native-image-picker';
 import NetInfo from "@react-native-community/netinfo";
+import animalDataSource from '../../constants/animalsInput'
+import humanDataSource from '../../constants/humansInput'
+import activityInput from '../../constants/activityList'
 
 class ObservationList extends React.Component {
 	static get options() {
@@ -86,125 +91,12 @@ class ObservationList extends React.Component {
 			items: [{ species: '', num: 0 }],
 			hrows: [1],
 			hitems: [{ species: '', num: 0 }],
-			dataSource: [
-				{
-					id: 1,
-					name: "Jelly Fish"
-				},
-				{
-					id: 2,
-					name: "Whale"
-				},
-				{
-					id: 3,
-					name: "Dog"
-				},
-				{
-					id: 4,
-					name: "Wolf"
-				},
-				{
-					id: 5,
-					name: "Sheep"
-				},
-				{
-					id: 6,
-					name: "Donkey"
-				},
-				{
-					id: 7,
-					name: "Girrafe"
-				},
-				{
-					id: 8,
-					name: "Cow"
-				},
-				{
-					id: 9,
-					name: "Calf"
-				},
-				{
-					id: 10,
-					name: "Cat"
-				},
-				{
-					id: 11,
-					name: "Lion"
-				},
-				{
-					id: 12,
-					name: "Tiger"
-				}
-			],
+			dataSource: animalDataSource,
 			placeHolderText: "Enter Animals Here...",
-			hdataSource: [
-				{
-					id: 1,
-					name: "Jelly Fish"
-				},
-				{
-					id: 2,
-					name: "Whale"
-				},
-				{
-					id: 3,
-					name: "Dog"
-				},
-				{
-					id: 4,
-					name: "Wolf"
-				},
-				{
-					id: 5,
-					name: "Sheep"
-				},
-				{
-					id: 6,
-					name: "Donkey"
-				},
-				{
-					id: 7,
-					name: "Girrafe"
-				},
-				{
-					id: 8,
-					name: "Cow"
-				},
-				{
-					id: 9,
-					name: "Calf"
-				},
-				{
-					id: 10,
-					name: "Cat"
-				},
-				{
-					id: 11,
-					name: "Lion"
-				},
-				{
-					id: 12,
-					name: "Tiger"
-				}
-			],
+			hdataSource: humanDataSource,
 			hplaceHolderText: "Enter Items Here...",
 			selectedText: "",
-			activityList: [
-				{ name: 'ios-airplane' },
-				{ name: 'ios-american-football' },
-				{ name: 'ios-baseball' },
-				{ name: 'ios-basketball' },
-				{ name: 'ios-bicycle' },
-				{ name: 'ios-body' },
-				{ name: 'ios-brush' },
-				{ name: 'ios-bug' },
-				{ name: 'ios-cart' },
-				{ name: 'ios-car' },
-				{ name: 'ios-camera' },
-				{ name: 'ios-cloudy-night' },
-				{ name: 'ios-color-palette' },
-				{ name: 'ios-easel' }
-			],
+			activityList: activityInput,
 			selectedActivity: []
 		}
 
@@ -368,258 +260,392 @@ class ObservationList extends React.Component {
 		return (
 			<StyleProvider style={getTheme(customVariables)}>
 				<Container>
-					<TopNav screenTitle='Observations'></TopNav>
+					<TopNav screenTitle='Check In'></TopNav>
 					<Segment>
 						<Button
-							first
+							last
 							active={this.state.seg === 1 ? true : false}
 							onPress={() => this.setState({ seg: 1 })}
 						>
-							<Text>1. Image</Text>
+							<Text>1. Scene</Text>
 						</Button>
 						<Button
+							first
 							active={this.state.seg === 2 ? true : false}
-							onPress={() => this.setState({ seg: 2 })}
+							onPress={() => this.state.seg >= 2 ? this.setState({ seg: 2 }) : null}
 						>
-							<Text>2. Animals</Text>
+							<Text>2. Species</Text>
 						</Button>
 						<Button
 							active={this.state.seg === 3 ? true : false}
-							onPress={() => this.setState({ seg: 3 })}
+							onPress={() => this.state.seg >= 3 ? this.setState({ seg: 3 }) : null}
 						>
 							<Text>3. Humans</Text>
 						</Button>
 						<Button
-							last
 							active={this.state.seg === 4 ? true : false}
-							onPress={() => this.setState({ seg: 4 })}
+							onPress={() => this.state.seg >= 4 ? this.setState({ seg: 4 }) : null}
 						>
-							<Text>4. Activity</Text>
+							<Text>4. Validate</Text>
 						</Button>
 					</Segment>
+
 					{
 						this.state.seg === 1 ?
 							<Content
-								contentContainerStyle={{
-									flex: 1,
-									paddingHorizontal: 20,
-									paddingVertical: 30,
-									backgroundColor: colors.gray
-								}}
 							>
-								<View style={{ flex: 1 }}>
+								<ScrollView
+									showsHorizontalScrollIndicator={false}
+									showsVerticalScrollIndicator={false}
+									contentContainerStyle={{
+										flex: 1,
+										paddingHorizontal: 20,
+										paddingVertical: 30,
+										backgroundColor: colors.gray
+									}}>
+									<View style={{ flex: 1 }}>
 
-									<Text>Add a photo of what you saw</Text>
+										<Text>Add a photo of what you saw</Text>
 
-									{
+										{
 
-										this.props.wantToAddPhoto === true
-											?
-											<View
-												style={{
-													flex: 1,
-													//flexDirection: 'row',
-													//justifyContent: 'space-between',
-													paddingVertical: 20
-												}}>
-												<Image
-													source={{ uri: this.props.newObservations[this.props.currentIndex].img.uri }}
+											this.state.avatarSource
+												?
+												<View
 													style={{
-														height: '100%',
-														//width: '100%',
-														//height: 720
+														flex: 1,
+														width: '100%',
+														height: 200,
+														//flexDirection: 'row',
+														//justifyContent: 'space-between',
+														paddingVertical: 20
+													}}>
+													<Image
+														source={{ uri: this.state.avatarSource.uri }}
+														style={{
+															height: '100%',
+															//width: '100%',
+															//height: 720
+														}}
+													/>
+												</View>
+												:
+												<View
+													style={{
+														flex: 1,
+														flexDirection: 'row',
+														justifyContent: 'space-between',
+														paddingVertical: 20
+													}}
+												>
+													<TouchableOpacity
+														onPress={() => {
+
+															const options = {
+																title: 'Select Avatar',
+																customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+																storageOptions: {
+																	skipBackup: true,
+																	path: 'images',
+																},
+															};
+
+															/**
+															 * The first arg is the options object for customization (it can also be null or omitted for default options),
+															 * The second arg is the callback which sends object: response (more info in the API Reference)
+															 */
+															ImagePicker.launchImageLibrary(options, (response) => {
+																//console.log('Response = ', response);
+
+																if (response.didCancel) {
+																	console.log('User cancelled image picker');
+																} else if (response.error) {
+																	console.log('ImagePicker Error: ', response.error);
+																} else if (response.customButton) {
+																	console.log('User tapped custom button: ', response.customButton);
+																} else {
+																	console.log('Image Response: ', response)
+
+																	/*const source = { uri: response.uri };
+																	this.props.actions.addPhoto(
+																		{
+																			uri: response.uri,
+																			fileName: response.fileName,
+																			fileSize: response.fileSize,
+																			type: response.type,
+																			path: response.path,
+																		},
+																		this.props.user
+																	)*/
+																	//Alert.alert('Image Picked', response.uri)
+																	// You can also display the image using data:
+																	// const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+																	this.setState({
+																		avatarSource: {
+																			uri: response.uri,
+																			fileName: response.fileName,
+																			fileSize: response.fileSize,
+																			type: response.type,
+																			path: response.path,
+																		},
+																	});
+																}
+															});
+															/*Navigation.push(this.props.componentId, {
+																component: {
+																	name: 'app.Gallery',
+																	options: {
+																		topBar: {
+																			visible: false
+																		}
+																	}
+																}
+															})*/
+														}}
+														style={{
+															flex: 1,
+															backgroundColor: 'white',
+															justifyContent: 'center',
+															alignItems: 'center',
+															aspectRatio: 1,
+															marginRight: 10,
+															borderWidth: 2,
+															borderRadius: 5,
+															borderStyle: 'dashed',
+															borderColor: 'blue'
+														}}
+													>
+														<Icon name='ios-cloud-outline' style={{ fontSize: 80 }}></Icon>
+														<Text>Tap to upload</Text>
+													</TouchableOpacity>
+													<TouchableOpacity
+														onPress={() => {
+
+															const options = {
+																title: 'Select Avatar',
+																customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+																storageOptions: {
+																	skipBackup: true,
+																	path: 'images',
+																},
+															};
+
+															/**
+															 * The first arg is the options object for customization (it can also be null or omitted for default options),
+															 * The second arg is the callback which sends object: response (more info in the API Reference)
+															 */
+															ImagePicker.launchCamera(options, (response) => {
+																console.log('Response = ', response);
+
+																if (response.didCancel) {
+																	console.log('User cancelled image picker');
+																} else if (response.error) {
+																	console.log('ImagePicker Error: ', response.error);
+																} else if (response.customButton) {
+																	console.log('User tapped custom button: ', response.customButton);
+																} else {
+																	const source = { uri: response.uri };
+																	/*this.props.actions.addPhoto(
+																		{
+																			uri: response.uri,
+																			fileName: response.fileName,
+																			fileSize: response.fileSize,
+																			type: response.type,
+																			path: response.path,
+																		},
+																		this.props.user
+																	)*/
+																	//Alert.alert('Image Picked', response.uri)
+																	// You can also display the image using data:
+																	// const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+																	this.setState({
+																		avatarSource: {
+																			uri: response.uri,
+																			fileName: response.fileName,
+																			fileSize: response.fileSize,
+																			type: response.type,
+																			path: response.path,
+																		},
+																	});
+																}
+															});
+															/*Navigation.push(this.props.componentId, {
+																component: {
+																	name: 'app.Camera',
+																	options: {
+																		topBar: {
+																			visible: false
+																		}
+																	}
+																}
+															})*/
+														}}
+														style={{
+															flex: 1,
+															justifyContent: 'center',
+															alignItems: 'center',
+															aspectRatio: 1,
+															backgroundColor: 'white',
+															marginLeft: 10,
+															borderWidth: 2,
+															borderRadius: 5,
+															borderStyle: 'dashed',
+															borderColor: 'blue'
+														}}
+													>
+														<Icon name='ios-camera' style={{ fontSize: 80 }}></Icon>
+														<Text>Take a photo</Text>
+													</TouchableOpacity>
+												</View>
+
+										}
+
+									</View>
+									<View style={{ flex: 1, justifyContent: 'space-between', paddingTop: 10 }}>
+										<View>
+											<Text>{this.state.time ? this.state.time : ''}, {this.state.date ? this.state.date : ''}</Text>
+											<Text>
+												{this.state.location !== null ? String(this.state.location.coords.longitude) + ', ' : ''}
+												{this.state.location !== null ? ' ' + String(this.state.location.coords.latitude) : ''}
+											</Text>
+										</View>
+									</View>
+
+									<View
+										style={{
+											flex: 1,
+											backgroundColor: 'white',
+											padding: 7,
+											borderRadius: 5,
+											shadowColor: "#000",
+											shadowOffset: {
+												width: 0,
+												height: 4,
+											},
+											shadowOpacity: 0.30,
+											shadowRadius: 4.65,
+											elevation: 4,
+											borderRadius: 7,
+											marginTop: 7
+										}}
+									>
+										<FlatList
+											//style={{ flex: 1 }}
+											contentContainerStyle={{ backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}
+											horizontal
+											showsHorizontalScrollIndicator={false}
+											data={this.state.activityList}
+											renderItem={({ item }) => {
+												//Alert.alert(item.name)
+												return (
+													<TouchableOpacity
+														onPress={() => {
+															this.setState({
+																//selectedActivity : this.state.selectedActivity.concat(item),=
+																selectedActivityName: item.name
+															})
+														}}
+														//key={index}
+														style={{
+															justifyContent: 'center',
+															alignItems: 'center',
+															width: 50,
+															height: 50,
+															backgroundColor: item.name === this.state.selectedActivityName ? colors.primary : colors.gray,
+															margin: 5,
+															borderRadius: 50,
+															borderColor: colors.primary,
+															borderWidth: 1
+														}}>
+														<Icon
+															name={item.name}
+															style={{
+																color: item.name === this.state.selectedActivityName ? 'white' : colors.primary,
+																fontSize: 30
+															}}
+														/>
+													</TouchableOpacity>
+												)
+											}}
+										>
+										</FlatList>
+
+
+										<View
+											style={{
+												width: '100%',
+												flexDirection: 'row',
+												justifyContent: 'space-between',
+												paddingBottom: 5
+											}}
+										>
+											<Text>
+												What were you doing?
+										</Text>
+										</View>
+
+										<View
+											style={{
+												width: '100%',
+												flexDirection: 'row',
+												justifyContent: 'space-between',
+												paddingBottom: 5
+											}}
+										>
+											<Form style={{ flex: 1, paddingRight: 3 }}>
+												<TextInput
+
+													onChangeText={(val) => {
+														this.setState({
+															note: val
+														})
+													}}
+													//rowSpan={2}
+													bordered
+													placeholder="e.g. I was out on my boat"
+													style={{
+														borderRadius: 7,
+														backgroundColor: colors.gray
 													}}
 												/>
-											</View>
-											:
-											<View
-												style={{
-													flex: 1,
-													flexDirection: 'row',
-													justifyContent: 'space-between',
-													paddingVertical: 20
-												}}
-											>
-												<TouchableOpacity
-													onPress={() => {
-
-														const options = {
-															title: 'Select Avatar',
-															customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
-															storageOptions: {
-																skipBackup: true,
-																path: 'images',
-															},
-														};
-
-														/**
-														 * The first arg is the options object for customization (it can also be null or omitted for default options),
-														 * The second arg is the callback which sends object: response (more info in the API Reference)
-														 */
-														ImagePicker.launchImageLibrary(options, (response) => {
-															//console.log('Response = ', response);
-
-															if (response.didCancel) {
-																console.log('User cancelled image picker');
-															} else if (response.error) {
-																console.log('ImagePicker Error: ', response.error);
-															} else if (response.customButton) {
-																console.log('User tapped custom button: ', response.customButton);
-															} else {
-																console.log('Image Response: ', response)
-																const source = { uri: response.uri };
-																this.props.actions.addPhoto(
-																	{
-																		uri: response.uri,
-																		fileName: response.fileName,
-																		fileSize: response.fileSize,
-																		type: response.type,
-																		path: response.path,
-																	},
-																	this.props.user
-																)
-																//Alert.alert('Image Picked', response.uri)
-																// You can also display the image using data:
-																// const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-																this.setState({
-																	avatarSource: source,
-																});
-															}
-														});
-														/*Navigation.push(this.props.componentId, {
-															component: {
-																name: 'app.Gallery',
-																options: {
-																	topBar: {
-																		visible: false
-																	}
-																}
-															}
-														})*/
-													}}
-													style={{
-														flex: 1,
-														backgroundColor: 'white',
-														justifyContent: 'center',
-														alignItems: 'center',
-														aspectRatio: 1,
-														marginRight: 10,
-														borderWidth: 2,
-														borderRadius: 5,
-														borderStyle: 'dashed',
-														borderColor: 'blue'
-													}}
-												>
-													<Icon name='ios-cloud-outline' style={{ fontSize: 80 }}></Icon>
-													<Text>Tap to upload</Text>
-												</TouchableOpacity>
-												<TouchableOpacity
-													onPress={() => {
-
-														const options = {
-															title: 'Select Avatar',
-															customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
-															storageOptions: {
-																skipBackup: true,
-																path: 'images',
-															},
-														};
-
-														/**
-														 * The first arg is the options object for customization (it can also be null or omitted for default options),
-														 * The second arg is the callback which sends object: response (more info in the API Reference)
-														 */
-														ImagePicker.launchCamera(options, (response) => {
-															console.log('Response = ', response);
-
-															if (response.didCancel) {
-																console.log('User cancelled image picker');
-															} else if (response.error) {
-																console.log('ImagePicker Error: ', response.error);
-															} else if (response.customButton) {
-																console.log('User tapped custom button: ', response.customButton);
-															} else {
-																const source = { uri: response.uri };
-																this.props.actions.addPhoto(
-																	{
-																		uri: response.uri,
-																		fileName: response.fileName,
-																		fileSize: response.fileSize,
-																		type: response.type,
-																		path: response.path,
-																	},
-																	this.props.user
-																)
-																//Alert.alert('Image Picked', response.uri)
-																// You can also display the image using data:
-																// const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-																this.setState({
-																	avatarSource: source,
-																});
-															}
-														});
-														/*Navigation.push(this.props.componentId, {
-															component: {
-																name: 'app.Camera',
-																options: {
-																	topBar: {
-																		visible: false
-																	}
-																}
-															}
-														})*/
-													}}
-													style={{
-														flex: 1,
-														justifyContent: 'center',
-														alignItems: 'center',
-														aspectRatio: 1,
-														backgroundColor: 'white',
-														marginLeft: 10,
-														borderWidth: 2,
-														borderRadius: 5,
-														borderStyle: 'dashed',
-														borderColor: 'blue'
-													}}
-												>
-													<Icon name='ios-camera' style={{ fontSize: 80 }}></Icon>
-													<Text>Take a photo</Text>
-												</TouchableOpacity>
-											</View>
-
-									}
-
-								</View>
-								<View style={{ flex: 1, justifyContent: 'space-between', paddingTop: 20 }}>
-									<View>
-										<Text>{this.state.time ? this.state.time : ''}, {this.state.date ? this.state.date : ''}</Text>
-										<Text>
-											{this.state.location !== null ? String(this.state.location.coords.longitude) : ''},
-											{this.state.location !== null ? ' ' + String(this.state.location.coords.latitude) : ''}
-										</Text>
+											</Form>
+										</View>
 									</View>
+
 									<Button
-										style={{ backgroundColor: '#3F51B5', justifyContent: 'center', alignItems: 'center' }}
+										style={{
+											backgroundColor: '#3F51B5',
+											justifyContent: 'center',
+											alignItems: 'center',
+											marginTop: 20
+										}}
 										primary
 										onPress={() => {
-											seg = this.state.seg + 1
-											this.setState({
-												seg: seg
-											}, () => {
-												this.props.newObservations.length > 0
-													?
-													this.props.actions.addTimeandLoc(
-														this.state.time + this.state.date,
-														this.state.location !== null ? this.state.location.coords.longitude : 'Not Specified',
-														this.state.location !== null ? this.state.location.coords.latitude : 'Not Specified',
-														this.props.user,
-														this.props.currentIndex
-													)
-													:
-													null
-											})
+											if (this.state.avatarSource) {
+												seg = this.state.seg + 1
+												this.setState({
+													seg: seg
+												}, () => {
+													this.props.actions
+														.addPhotoTimeandLoc(
+															{
+																sessionID: 81000,
+																activity: {
+																	type: this.state.selectedActivityName ? this.state.selectedActivityName : 'Not Specified',
+																	note: this.state.note ? this.state.note : 'Not Specified',
+																},
+																time: this.state.time + this.state.date,
+																lon: this.state.location !== null ? this.state.location.coords.longitude : 'Not Specified',
+																lat: this.state.location !== null ? this.state.location.coords.latitude : 'Not Specified',
+																img: this.state.avatarSource
+															}
+														)
+												})
+											} else {
+												Alert.alert('Required: ', 'Please select an image or take a photo!')
+											}
 										}}
 									//transparent={false}
 									//primary
@@ -628,8 +654,9 @@ class ObservationList extends React.Component {
 										<Text style={{ color: 'white' }}>Next Step</Text>
 
 									</Button>
-								</View>
 
+
+								</ScrollView>
 							</Content>
 							:
 							null
@@ -792,7 +819,9 @@ class ObservationList extends React.Component {
 											this.setState({
 												seg: seg
 											})
-											this.props.actions.addAnimalstoNewObservation(this.state.items, this.props.user, this.props.currentIndex)
+											this.props.actions
+												.addAnimals(this.state.items)
+											//.addAnimalstoNewObservation(this.state.items, this.props.user, this.props.currentIndex)
 										}}
 									>
 										<Text style={{ color: 'white', fontSize: 16.5 }}>Next Step</Text>
@@ -960,11 +989,13 @@ class ObservationList extends React.Component {
 											seg = this.state.seg + 1
 											this.setState({
 												seg: seg
+											}, () => {
+												this.props.actions.addHumans(this.state.hitems)
 											})
-											this.props.actions.addHumanstoNewObservation(this.state.hitems, this.props.user, this.props.currentIndex)
+											//this.props.actions.addHumanstoNewObservation(this.state.hitems, this.props.user, this.props.currentIndex)
 										}}
 									>
-										<Text style={{ color: 'white', fontSize: 16.5 }}>Next Step</Text>
+										<Text style={{ color: 'white', fontSize: 16.5 }}>Submit</Text>
 									</Button>
 								</FooterTab>
 							</Footer>
@@ -983,102 +1014,61 @@ class ObservationList extends React.Component {
 									backgroundColor: colors.gray
 								}}
 							>
-								<View
-									style={{
-										//flex: 3,
-										backgroundColor: 'white',
-										padding: 7,
-										borderRadius: 5,
-										shadowColor: "#000",
-										shadowOffset: {
-											width: 0,
-											height: 4,
-										},
-										shadowOpacity: 0.30,
-										shadowRadius: 4.65,
-										elevation: 4,
-										borderRadius: 7,
-									}}
-								>
-									<FlatList
-										//style={{ flex: 1 }}
-										contentContainerStyle={{ backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}
-										horizontal
-										showsHorizontalScrollIndicator={false}
-										data={this.state.activityList}
-										renderItem={({ item }) => {
-											//Alert.alert(item.name)
-											return (
-												<TouchableOpacity
-													onPress={() => {
-														this.setState({
-															//selectedActivity : this.state.selectedActivity.concat(item),=
-															selectedActivityName: item.name
-														})
-													}}
-													//key={index}
-													style={{
-														justifyContent: 'center',
-														alignItems: 'center',
-														width: 50,
-														height: 50,
-														backgroundColor: item.name === this.state.selectedActivityName ? colors.primary : colors.gray,
-														margin: 5,
-														borderRadius: 50,
-														borderColor: colors.primary,
-														borderWidth: 1
-													}}>
-													<Icon
-														name={item.name}
-														style={{
-															color: item.name === this.state.selectedActivityName ? 'white' : colors.primary,
-															fontSize: 30
-														}}
-													/>
+								<List>
+									{this.props.tempObservation.img ?
+										<ListItem
+											style={{
+												marginLeft: 0,
+												marginBottom: 10,
+												paddingHorizontal: 10,
+												borderRadius: 5,
+												shadowColor: "#000",
+												shadowOffset: {
+													width: 0,
+													height: 4
+												},
+												shadowOpacity: 0.3,
+												shadowRadius: 4.65,
+												elevation: 4,
+												borderRadius: 7
+											}}
+											thumbnail
+										>
+											<Left>
+												<Thumbnail
+													square
+													large
+													size={120}
+													source={{ uri: this.props.tempObservation.img.uri }}
+												/>
+											</Left>
+											<Body style={{ paddingLeft: 10 }}>
+												<Text style={{ paddingBottom: 4 }} numberOfLines={1}>
+													{this.props.tempObservation.sessionID}
+												</Text>
+												<Text numberOfLines={1} note>
+													{this.props.tempObservation.time}
+												</Text>
+												<Text
+													style={{ paddingBottom: 4 }}
+													numberOfLines={1}
+													note
+												>
+													{this.props.tempObservation.lon} {this.props.tempObservation.lat}
+												</Text>
+												<TouchableOpacity>
+													<Text style={{ color: "blue" }} note>
+														View More
+                        </Text>
 												</TouchableOpacity>
-											)
-										}}
-									>
-									</FlatList>
-									<View
-										style={{
-											width: '100%',
-											flexDirection: 'row',
-											justifyContent: 'space-between',
-											paddingBottom: 5
-										}}
-									>
+											</Body>
+										</ListItem>
+										:
 										<Text>
-											What were you doing?
+											You Have Not Selected Any Images!
 										</Text>
-									</View>
-
-									<View
-										style={{
-											width: '100%',
-											flexDirection: 'row',
-											justifyContent: 'space-between',
-											paddingBottom: 5
-										}}
-									>
-										<Form style={{ flex: 1, paddingRight: 3 }}>
-											<Textarea
-												onChangeText={(val) => {
-													this.setState({
-														note: val
-													})
-												}}
-												rowSpan={5}
-												bordered
-												placeholder="e.g. I was out on my boat"
-												style={{
-													borderRadius: 7,
-													backgroundColor: colors.gray
-												}}
-											/>
-										</Form>
-									</View>
-								</View>
+									}
+								</List>
 							</Content>
 							:
 							null
@@ -1091,11 +1081,13 @@ class ObservationList extends React.Component {
 									<Button
 										onPress={() => {
 											//let newObj = JSON.parse(JSON.stringify(obj));
-											var newObservations = JSON.parse(JSON.stringify(this.props.newObservations))
-											newObservations[this.props.currentIndex].activity = {
-												type: this.state.selectedActivityName ? this.state.selectedActivityName : 'Not Specified',
-												note: this.state.note ? this.state.note : 'Not Specified'
-											}
+											seg = 4//this.state.seg + 1
+											this.setState({
+												seg: seg
+											})
+
+											//var temp = JSON.parse(JSON.stringify(this.props.tempObservation))
+											//var tempObservation = { ...temp, human: this.state.hitems, sessionID: 81000 }
 											NetInfo.fetch().then(state => {
 												console.log("Connection type", state.type);
 												console.log("Is connected?", state.isConnected);
@@ -1104,13 +1096,14 @@ class ObservationList extends React.Component {
 														state.isConnected,
 														this.props.user,
 														this.props.token,
-														newObservations,
+														this.props.tempObservation,
 														this.props.currentIndex
 													)
 													Navigation.popToRoot("AppStack")
 													//this.props.actions.syncObservations(this.state.isConnected, this.props.user, this.props.token, this.props.newObservations)
 												})
 											});
+
 										}}
 									>
 										<Text style={{ color: 'white', fontSize: 16.5 }}>Submit</Text>
@@ -1120,6 +1113,7 @@ class ObservationList extends React.Component {
 							:
 							null
 					}
+
 				</Container>
 			</StyleProvider>
 		);
@@ -1129,11 +1123,12 @@ class ObservationList extends React.Component {
 
 function mapStateToProps(state, ownProps) {
 	return {
-		newObservations: state.appReducer.newObservations,
+		//newObservations: state.appReducer.newObservations,
 		currentIndex: state.appReducer.currentIndex,
 		user: state.authReducer.user,
 		token: state.authReducer.token,
-		wantToAddPhoto: state.appReducer.wantToAddPhoto
+		wantToAddPhoto: state.appReducer.wantToAddPhoto,
+		tempObservation: state.appReducer.tempObservation
 	};
 }
 

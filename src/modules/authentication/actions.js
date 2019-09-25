@@ -57,7 +57,7 @@ export function signinUser(user, status) {
 				.catch(error => {
 					console.log("Error Logging In: ", error); //eslint-disable-line
 					//dispatch(signinUserFail(error.response));
-					Alert.alert('Server Error', 'We could not sing you in, You are offline, you can sync later')
+					Alert.alert('Server Error', 'We could not sign you in, You are offline, you can sync later')
 					dispatch(signinUserSuccess({ user, token: '' }));
 					_signInAsync(user)
 				});
@@ -119,14 +119,14 @@ export function signupUser(user, status) {
 						},
 						token: res.data.meta.token
 					}));
-					_signUpAsync(user)
+					_signupAsync(user)
 				})
 				.catch(error => {
 					console.log("Error registering: ", error); //eslint-disable-line
 					//dispatch(signinUserFail(error.response));
 					Alert.alert(
 						'Server Error',
-						'We could not sing you up, you can try later. or You can Sign In and register later with same credentials'
+						'We could not sign you up, you can try later. or You can Sign In and register later with same credentials'
 					)
 					//dispatch(signupUserSuccess({ user, token: '' }));
 					//_signupAsync(user)

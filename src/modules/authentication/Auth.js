@@ -5,14 +5,17 @@ import {
 	//	Text,
 	//	TextInput,
 	TouchableOpacity,
+	ImageBackground,
+	Text,
+	View
 	//ScrollView
 } from 'react-native'
 
 import {
 	Container,
 	Content,
-	Text,
-	View,
+	//Text,
+	//View,
 	Button,
 	Body,
 	ListItem,
@@ -43,8 +46,11 @@ import validate from './validators/validate_wrapper'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as userActions from './actions';
+//import Navigation from 'react-native-navigation'
+import { Navigation } from "react-native-navigation";
 
-class Register extends React.Component {
+
+class Auth extends React.Component {
 	state = {
 		password: '',
 		email: '',
@@ -57,227 +63,98 @@ class Register extends React.Component {
 		showPass: false,
 	}
 
-
-	onChangeText = (key, value) => {
-		this.setState(
-			{
-				[key]: value,
-				isSubmiting: false
-			}
-		)
-		//if (this.props.message) this.rmError()
-	}
-
-	submit = (btn) => {
-
-		if (btn === 'logIn') {
-			this.setState({
-				isRegistering: false
-			})
-			//Alert.alert('IN')
-		}
-		if (btn === 'register') {
-			this.setState({
-				isRegistering: true
-			})
-			//Alert.alert('UP')
-		}
-
-		const emailError = validate('email', this.state.email)
-		const passwordError = validate('password', this.state.password)
-		//const fnameError = validate('firstname', this.state.fname)
-
-		this.setState({
-			emailError: emailError,
-			passwordError: passwordError,
-			//fnameError: fnameError
-		})
-
-		if (!emailError && !passwordError) {
-			var user = {
-				password: this.state.password,
-				email: this.state.email,
-				gpsPermission: this.state.gpsPermission,
-				cameraPermission: this.state.cameraPermission
-			}
-
-			this.setState({
-				passwordError: '',
-				emailError: '',
-				isSubmiting: true
-			}, () => {
-
-				if (this.state.isRegistering) {
-					if (this.props.status) { this.props.actions.signupUser(user, this.props.status) }
-					else {
-						this.props.actions.signupUser(user, this.props.status)
-						Alert.alert('Offline', 'You are offline, we will register you when you are online. All data is stored locally.')
-					}
-				}
-				else {
-					if (this.props.status) { this.props.actions.signinUser(user, this.props.status) }
-					else {
-						this.props.actions.signinUser(user, this.props.status)
-						Alert.alert('Offline',
-							'The data you will see is from last session, you can sync it as soon as you are connected')
-					}
-				}
-			})
-		}
-	}
-
-	rmError() {
-		this.setState({
-			isRegistering: false,
-		})
-		this.props.actions.clearError();
-	}
-
 	render() {
 		return (
-			<Container>
-				<Content
-					//padder
-					contentContainerStyle={styles.container}
-				>
-					<Form
-						style={{
-							width: '90%'
-						}}
-					>
-						<Input
-							onChangeText={val => this.onChangeText('email', val)}
-							placeholder='E-mail address'
-							value={this.state.email}
-							onBlur={() => {
-								this.setState({
-									emailError: validate('email', this.state.email)
-								})
-							}}
-
-							leftIcon={
-								<IconWithBadge
-									style={{ margin: 0 }}
-									name='ios-mail'
-									size={24}
-									color={colors.primary}
-								/>
-							}
-
-							errorStyle={{ color: 'red' }}
-							errorMessage={this.state.emailError ? this.state.emailError : null}
-						></Input>
-
-						<Input
-							onChangeText={val => this.onChangeText('password', val)}
-							placeholder='Password'
-							value={this.state.password}
-							onBlur={() => {
-								this.setState({
-									passwordError: validate('password', this.state.password)
-								})
-							}}
-
-							leftIcon={
-								<IconWithBadge
-									style={{ margin: 0 }}
-									name='ios-key'
-									size={24}
-									color={colors.primary}
-								/>
-							}
-
-							errorStyle={{ color: 'red' }}
-							errorMessage={this.state.passwordError ? this.state.passwordError : null}
-						></Input>
-
-					</Form>
-					<List style={{ paddingVertical: 15 }}>
-						{/* <ListItem style={{ borderBottomWidth: 0 }}>
-							<CheckBox
-								checked={this.state.gpsPermission}
-								color={colors.primary}
-								onPress={() => this.setState({
-									gpsPermission: !this.state.gpsPermission
-								})}
-							>
-							</CheckBox>
-							<Text style={{
-								paddingLeft: 7
-							}}>
-								GPS
-							</Text>
-						</ListItem>
-						<ListItem style={{ borderBottomWidth: 0 }}>
-							<CheckBox
-								checked={this.state.cameraPermission}
-								color={colors.primary}
-								onPress={() => this.setState({
-									cameraPermission: !this.state.cameraPermission
-								})}
-							>
-							</CheckBox>
-							<Text style={{
-								paddingLeft: 7
-							}}>
-								Camera
-							</Text>
-						</ListItem> */}
-					</List>
-					<View style={{
-						//flex:1,
-						width: '90%',
-						flexDirection: 'row',
-						justifyContent: 'space-evenly',
+			<ImageBackground
+				source={require('../../../images/initBack.jpg')}
+				style={{
+					width: '100%',
+					height: '100%'
+				}}
+			>
+				<View
+					style={{
+						flex: 1,
+						justifyContent: 'center',
+						alignItems: 'center',
+						paddingBottom: 15
 					}}
-					>
-						<Button
-							bordered
-							rounded
-							iconLeft
-							small
-							style={{ borderColor: colors.primary }}
-							disabled={this.state.isSubmiting}
-						//disabled={true}
-						//style={{ marginHorizontal: 20 }}
-						>
-							<TouchableOpacity
-								onPress={() => this.submit('logIn')}
-								style={{ flexDirection: 'row' }}
-							>
-								<Icon
-									name='ios-log-in'
-									style={{ color: colors.primary }}
-								//style={{ fontSize: 25, padding: 5 }}
-								/>
+				>
+					<View style={{ flex: 4, justifyContent: 'center', alignItems: 'center' }}>
 
-								<Text style={{ color: colors.primary }}>Sing In</Text>
-							</TouchableOpacity>
-						</Button>
-						<Button
-							bordered
-							rounded
-							iconLeft
-							small
-							disabled={this.state.isSubmiting}
-							//color={colors.primary}
-							style={{ borderColor: colors.primary }}
-						>
-							<TouchableOpacity
-								onPress={() => this.submit('register')}
-								style={{ flexDirection: 'row' }}
-							>
-								<Icon
-									name='ios-person-add'
-									//color={colors.primary}
-									style={{ color: colors.primary }}
-								/>
-								<Text style={{ color: colors.primary }} >Register</Text>
-							</TouchableOpacity>
-						</Button>
 					</View>
-				</Content>
-			</Container>
+					<View
+						style={{
+							flex: 1,
+							justifyContent: 'center',
+							alignItems: 'center',
+							paddingVertical: 7,
+							//paddingHorizontal: 20,
+							//backgroundColor: 'green',
+							width: '100%'
+						}}>
+						<TouchableOpacity
+							onPress={() => {
+								Navigation.push("AuthStack", {
+									component: {
+										name: "app.SignUp",
+										passProps: {
+											sessionName: "General"
+										},
+										options: {
+											topBar: {
+												visible: false,
+												drawBehind: true
+											}
+										}
+									}
+								});
+							}}
+							style={{
+								borderRadius: 5,
+								width: '90%',
+								height: '85%',
+								//flex: 1,
+								backgroundColor: '#FF6167',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}}
+						>
+							<Text style={{ fontSize: 22, fontWeight: 'bold', color: 'white' }}>
+								Get Started
+							</Text>
+						</TouchableOpacity>
+					</View>
+					<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+						<Text style={{ fontSize: 15, color: 'white' }}>
+							Already have an account?
+						</Text>
+						<TouchableOpacity
+							onPress={() => {
+								Navigation.push("AuthStack", {
+									component: {
+										name: "app.LogIn",
+										passProps: {
+											sessionName: "General"
+										},
+										options: {
+											topBar: {
+												visible: false,
+												drawBehind: true
+											}
+										}
+									}
+								});
+							}}
+							style={{ paddingLeft: 7 }}
+						>
+							<Text style={{ fontSize: 15, color: 'white' }}>
+								Log In
+							</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+			</ImageBackground>
 		)
 	}
 }
@@ -295,4 +172,4 @@ function mapDispatchToProps(dispatch) {
 	};
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);

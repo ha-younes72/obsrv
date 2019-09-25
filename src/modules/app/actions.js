@@ -10,6 +10,59 @@ import AsyncStorage from '@react-native-community/async-storage';
 //var fs = require('fs');
 var RNFS = require('react-native-fs');
 
+export function addTempObservationSuccess(obsrv){
+	return {
+		type: types.ADD_TEMP_OBSERVATION_SUCCESS,
+		obsrv: obsrv
+	}
+}
+
+export function addTempObservation(obsrv) {
+	return function (dispatch) {
+		console.log('I amd here')
+		dispatch(addTempObservationSuccess(obsrv))
+	}
+	
+}
+
+export function addPhotoTimeandLocSuccess(img){
+	return {
+		type: types.ADD_IMG_TIME_LOCATION_SUCCESS,
+		img: img
+	}
+}
+
+export function addPhotoTimeandLoc(img) {
+	return function (dispatch) {
+		dispatch(addPhotoTimeandLocSuccess(img))
+	}
+}
+
+export function addAnimalsSuccess(params) {
+	return{
+		type: types.ADD_ANIMALS_SUCCESS,
+		animal: params
+	}
+}
+
+export function addAnimals(params) {
+	return function (dispatch) {
+		dispatch(addAnimalsSuccess(params))
+	}
+}
+
+export function addHumansSuccess(params) {
+	return{
+		type: types.ADD_HUMANS_SUCCESS,
+		human: params
+	}
+}
+
+export function addHumans(params) {
+	return function (dispatch) {
+		dispatch(addHumansSuccess(params))
+	}
+}
 export function addPhotoSuccess(img) {
 	return {
 		type: types.ADD_TO_NEWOBSERVATIONS_SUCCESS,
@@ -515,13 +568,31 @@ export function uploadNewObservationFail(obsrv, index) {
 	}
 }
 
-export function uploadNewObservation(status, user, token, newObservations, currentIndex) {
+export function uploadTempObservationSuccess(obsrv, index, email) {
+	return {
+		type: types.UPLOAD_TEMP_OBSERVATION_SUCCESS,
+		newObservation: obsrv,
+		index: index,
+		email: email
+	}
+}
+
+export function uploadTempObservationFail(obsrv, index, email) {
+	return {
+		type: types.UPLOAD_TEMP_OBSERVATION_FAIL,
+		newObservation: obsrv,
+		index: index,
+		email: email
+	}
+}
+
+export function uploadNewObservation(status, user, token, tempObservation, currentIndex) {
 	return function (dispatch) {
 		if (status) {
 
-			console.log('Obsrv to be uploaded: ', newObservations[currentIndex])
+			console.log('Obsrv to be uploaded: ', tempObservation)
 			RNFS
-				.stat(newObservations[currentIndex].img.path)
+				.stat(tempObservation.img.path)
 				.then(statRes => {
 					console.log('Stat Result: ', statRes)
 				})
@@ -532,9 +603,9 @@ export function uploadNewObservation(status, user, token, newObservations, curre
 
 			var files = [{
 				name: 'photoFile',
-				filename: newObservations[currentIndex].img.fileName,
-				filepath: newObservations[currentIndex].img.path,
-				filetype: newObservations[currentIndex].img.type
+				filename: tempObservation.img.fileName,
+				filepath: tempObservation.img.path,
+				filetype: tempObservation.img.type
 			}];
 
 			var uploadBegin = (response) => {
@@ -558,28 +629,28 @@ export function uploadNewObservation(status, user, token, newObservations, curre
 				},
 				fields:
 				{
-					sessionID: JSON.stringify(newObservations[currentIndex].sessionID),
+					sessionID: JSON.stringify(tempObservation.sessionID),
 					//userID: 11,
-					animal: JSON.stringify(newObservations[currentIndex].animal),
-					human: JSON.stringify(newObservations[currentIndex].human),
-					activity: JSON.stringify(newObservations[currentIndex].activity),
-					text: newObservations[currentIndex].text,
-					lat: JSON.stringify(newObservations[currentIndex].lat),
-					lon: JSON.stringify(newObservations[currentIndex].lon),
-					time: newObservations[currentIndex].time,
+					animal: JSON.stringify(tempObservation.animal),
+					human: JSON.stringify(tempObservation.human),
+					activity: JSON.stringify(tempObservation.activity),
+					text: tempObservation.text,
+					lat: JSON.stringify(tempObservation.lat),
+					lon: JSON.stringify(tempObservation.lon),
+					time: tempObservation.time,
 				},
 				begin: uploadBegin,
 				progress: uploadProgress
 			}).promise.then((response) => {
 				if (response.statusCode == 200) {
 					console.log('FILES UPLOADED!', JSON.parse(response.body)); // response.statusCode, response.headers, response.body
-					newObservations[currentIndex].img = newObservations[currentIndex].img.uri
-					dispatch(uploadNewObservationSuccess(newObservations[currentIndex], currentIndex, user.email))
-					//_saveSyncedObservation(newObservations[currentIndex], currentIndex, user)
+					//tempObservation.img = tempObservation.img.uri
+					dispatch(uploadTempObservationSuccess({...tempObservation, img: tempObservation.img.uri}, currentIndex, user.email))
+					//_saveSyncedObservation(tempObservation, currentIndex, user)
 					Alert.alert('Success', 'Observation Uploaded!')
 					//console.log('Put New Response: ', response)
 				} else {
-					dispatch(uploadNewObservationFail(newObservations[currentIndex], currentIndex))
+					dispatch(uploadTempObservationFail(tempObservation, currentIndex, user.email))
 					Alert.alert('SERVER ERROR', JSON.stringify(response))
 					console.log('SERVER ERROR');
 				}
@@ -589,7 +660,7 @@ export function uploadNewObservation(status, user, token, newObservations, curre
 						console.log('Upload Cancelled')
 						// cancelled by user
 					}
-					dispatch(uploadNewObservationFail(newObservations[currentIndex], currentIndex))
+					dispatch(uploadTempObservationFail(tempObservation, currentIndex, user.email))
 					Alert.alert('ERROR', JSON.stringify(err))
 					console.log('Err Uploading: ', err);
 				});
@@ -683,7 +754,7 @@ export function uploadNewObservation(status, user, token, newObservations, curre
 					console.log('Put New Error: ', error.response ? error.response : error)
 				});*/
 		} else {
-			dispatch(uploadNewObservationFail(newObservations[currentIndex], currentIndex))
+			dispatch(uploadTempObservationFail(tempObservation, currentIndex, user.email))
 			Alert.alert('Offline', 'You can sync later')
 		}
 	}

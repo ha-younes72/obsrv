@@ -125,6 +125,13 @@ class ObservationList extends React.Component {
               RESET PASSWORD
             </Text>
 
+            <Text style={{ color: 'gray', fontSize: 16, marginBottom: 40 }}>
+              RESET PASSWORD
+            </Text>
+
+            <Text style={{ color: 'gray', fontSize: 16, marginBottom: 40 }}>
+              RESET PASSWORD
+            </Text>
           </Content>
 
         </Container>

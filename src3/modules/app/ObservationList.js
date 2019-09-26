@@ -159,12 +159,10 @@ class ObservationList extends React.Component {
 		//var temp = date.toLocaleString().strip;
 		fullDate = date.toDateString()//temp[1] + ' ' + temp[2] + ', '+temp[3]
 		this.setState({ date: fullDate })
-		
-
-		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		shortDate = (date.getDate()).toString() + '/' + monthNames[date.getMonth()] + '/' + (date.getFullYear()).toString();
-		this.setState({ displayDate: shortDate })
-	
+		//Alert.alert(String(date.getFullYear()))
+		//Alert.alert(date.toLocaleString())
+		//Alert.alert(date.toDateString())
+		//Alert.alert(date.toString())
 		// Getting current hour from Date object.
 		hour = date.getHours();
 		// Checking if the Hour is less than equals to 11 then Set the Time format as AM.
@@ -197,16 +195,13 @@ class ObservationList extends React.Component {
 		}
 		// Adding all the variables in fullTime variable.
 		fullTime = hour.toString() + ':' + minutes.toString() + ':' + seconds.toString() + ' ' + TimeType.toString();
-		shortTime = (date.getHours()).toString() + ':' + minutes.toString();
+
 
 		// Setting up fullTime variable in State.
 		this.setState({
 
 			time: fullTime
 
-		});
-		this.setState({
-			displayTime: shortTime
 		});
 	}
 
@@ -270,26 +265,26 @@ class ObservationList extends React.Component {
 						<Button
 							last
 							active={this.state.seg === 1 ? true : false}
-							//onPress={() => this.setState({ seg: 1 })}
+							onPress={() => this.setState({ seg: 1 })}
 						>
 							<Text>1. Scene</Text>
 						</Button>
 						<Button
 							first
 							active={this.state.seg === 2 ? true : false}
-							//onPress={() => this.state.seg >= 2 ? this.setState({ seg: 2 }) : null}
+							onPress={() => this.state.seg >= 2 ? this.setState({ seg: 2 }) : null}
 						>
 							<Text>2. Species</Text>
 						</Button>
 						<Button
 							active={this.state.seg === 3 ? true : false}
-							//onPress={() => this.state.seg >= 3 ? this.setState({ seg: 3 }) : null}
+							onPress={() => this.state.seg >= 3 ? this.setState({ seg: 3 }) : null}
 						>
 							<Text>3. Humans</Text>
 						</Button>
 						<Button
 							active={this.state.seg === 4 ? true : false}
-							//onPress={() => this.state.seg >= 4 ? this.setState({ seg: 4 }) : null}
+							onPress={() => this.state.seg >= 4 ? this.setState({ seg: 4 }) : null}
 						>
 							<Text>4. Validate</Text>
 						</Button>
@@ -297,7 +292,7 @@ class ObservationList extends React.Component {
 
 					{
 						this.state.seg === 1 ?
-							<Content style={{backgroundColor: colors.gray}}
+							<Content
 							>
 								<ScrollView
 									showsHorizontalScrollIndicator={false}
@@ -310,7 +305,7 @@ class ObservationList extends React.Component {
 									}}>
 									<View style={{ flex: 1 }}>
 
-										{/* <Text>Add a photo of what you saw</Text> */}
+										<Text>Add a photo of what you saw</Text>
 
 										{
 
@@ -508,25 +503,16 @@ class ObservationList extends React.Component {
 										}
 
 									</View>
-									<View style={{ flex: 1, justifyContent: 'space-between', paddingTop: 5, paddingBottom: 5 }}>
-										<View style={{flexDirection: "row",}}>
-											<Icon style={{ fontSize: 18, paddingRight: 5}} name="ios-time" />
-											<Text style={{ fontSize: 12 }}>
-												{this.state.displayTime ? this.state.displayTime : ''}
-											</Text>
-										
-											<Icon style={{ fontSize: 18, paddingLeft: 8, paddingRight: 5}} name="ios-calendar" />
-											<Text style={{ fontSize: 12 }}>
-												{this.state.displayDate ? this.state.displayDate : ''}
-											</Text>
-										
-											<Icon style={{ fontSize: 18, paddingLeft: 8, paddingRight: 5}} name="ios-pin" />
-											<Text style={{ fontSize: 12 }}>
+									<View style={{ flex: 1, justifyContent: 'space-between', paddingTop: 10 }}>
+										<View>
+											<Text>{this.state.time ? this.state.time : ''}, {this.state.date ? this.state.date : ''}</Text>
+											<Text>
 												{this.state.location !== null ? String(this.state.location.coords.longitude) + ', ' : ''}
 												{this.state.location !== null ? ' ' + String(this.state.location.coords.latitude) : ''}
 											</Text>
 										</View>
 									</View>
+
 									<View
 										style={{
 											flex: 1,
@@ -587,7 +573,7 @@ class ObservationList extends React.Component {
 										</FlatList>
 
 
-										{/* <View
+										<View
 											style={{
 												width: '100%',
 												flexDirection: 'row',
@@ -597,7 +583,7 @@ class ObservationList extends React.Component {
 										>
 											<Text>
 												What were you doing?
-											</Text>
+										</Text>
 										</View>
 
 										<View
@@ -625,7 +611,7 @@ class ObservationList extends React.Component {
 													}}
 												/>
 											</Form>
-										</View> */}
+										</View>
 									</View>
 
 									<Button
@@ -646,10 +632,10 @@ class ObservationList extends React.Component {
 														.addPhotoTimeandLoc(
 															{
 																sessionID: 81000,
-																activity: //{
-																	this.state.selectedActivityName ? this.state.selectedActivityName : 'Not Specified',
-																	//note: this.state.note ? this.state.note : 'Not Specified',
-																//},
+																activity: {
+																	type: this.state.selectedActivityName ? this.state.selectedActivityName : 'Not Specified',
+																	note: this.state.note ? this.state.note : 'Not Specified',
+																},
 																time: this.state.time + this.state.date,
 																lon: this.state.location !== null ? this.state.location.coords.longitude : 'Not Specified',
 																lat: this.state.location !== null ? this.state.location.coords.latitude : 'Not Specified',
@@ -668,6 +654,8 @@ class ObservationList extends React.Component {
 										<Text style={{ color: 'white' }}>Next Step</Text>
 
 									</Button>
+
+
 								</ScrollView>
 							</Content>
 							:
@@ -767,7 +755,7 @@ class ObservationList extends React.Component {
 												<Form style={{ flex: 1, paddingLeft: 3 }}>
 													<Item regular style={{ borderRadius: 7, backgroundColor: colors.gray }}>
 														<Input
-															placeholder=" "
+															placeholder="0"
 															onChangeText={(num) => {
 																var items = this.state.items
 																items[index] = { species: items[index].species, num: num }
@@ -802,26 +790,19 @@ class ObservationList extends React.Component {
 								</View>
 								<View
 									style={{
+										borderColor: '#3F51B5',
+										borderWidth: 2,
+										borderRadius: 7,
 										alignItems: 'center',
 										justifyContent: 'center',
 										padding: 7,
 										marginTop: 10
 									}}
 								>
-									
-									<Button
-										style={{backgroundColor: '#FFA500'}}
-										onPress={() => {
-											seg = this.state.seg + 1
-											this.setState({
-												seg: seg
-											})
-											this.props.actions
-												.addAnimals(this.state.items)
-										}}
-									>
-										<Text style={{ color: '#fff', fontSize: 16, textAlign: 'center' }}>No Animals</Text>
-									</Button>
+									<Text
+										style={{ color: '#3F51B5', fontSize: 16, textAlign: 'center' }}>
+										If you didn't see any animals, continue with nothing entered.
+									</Text>
 								</View>
 							</Content>
 							:
@@ -945,7 +926,7 @@ class ObservationList extends React.Component {
 												<Form style={{ flex: 1, paddingLeft: 3 }}>
 													<Item regular style={{ borderRadius: 7, backgroundColor: colors.gray }}>
 														<Input
-															placeholder=" "
+															placeholder="0"
 															onChangeText={(num) => {
 																//Alert.alert(String(val), String(index))
 																var items = this.state.hitems
@@ -980,26 +961,19 @@ class ObservationList extends React.Component {
 								</View>
 								<View
 									style={{
+										borderColor: '#3F51B5',
+										borderWidth: 2,
+										borderRadius: 7,
 										alignItems: 'center',
 										justifyContent: 'center',
 										padding: 7,
 										marginTop: 10
 									}}
 								>
-									
-									<Button
-										style={{backgroundColor: '#FFA500'}}
-										onPress={() => {
-											seg = this.state.seg + 1
-											this.setState({
-												seg: seg
-											})
-											this.props.actions
-												.addAnimals(this.state.items)
-										}}
-									>
-										<Text style={{ color: '#fff', fontSize: 16, textAlign: 'center' }}>No Human Items</Text>
-									</Button>
+									<Text
+										style={{ color: '#3F51B5', fontSize: 16, textAlign: 'center' }}>
+										If you didn't see any items, continue with nothing entered.
+									</Text>
 								</View>
 							</Content>
 							:
@@ -1021,7 +995,7 @@ class ObservationList extends React.Component {
 											//this.props.actions.addHumanstoNewObservation(this.state.hitems, this.props.user, this.props.currentIndex)
 										}}
 									>
-										<Text style={{ color: 'white', fontSize: 16.5 }}>Review</Text>
+										<Text style={{ color: 'white', fontSize: 16.5 }}>Submit</Text>
 									</Button>
 								</FooterTab>
 							</Footer>
@@ -1070,38 +1044,22 @@ class ObservationList extends React.Component {
 											</Left>
 											<Body style={{ paddingLeft: 10 }}>
 												<Text style={{ paddingBottom: 4 }} numberOfLines={1}>
-													{/* {this.props.tempObservation.sessionID} */}
-													{this.state.selectedActivityName}
+													{this.props.tempObservation.sessionID}
 												</Text>
-												<View style={{flexDirection: "row",}}>
-													<Icon style={{ fontSize: 18, paddingRight: 5}} name="md-time" />
-													<Text style={{ fontSize: 12 }}>
-														{this.state.displayTime ? this.state.displayTime : ''}
-													</Text>
-												
-													<Icon style={{ fontSize: 18, paddingLeft: 8, paddingRight: 5}} name="ios-calendar" />
-													<Text style={{ fontSize: 12 }}>
-														{this.state.displayDate ? this.state.displayDate : ''}
-													</Text>
-												</View>
-												<View style={{flexDirection: "row",}}>
-													<Icon style={{ fontSize: 18, paddingRight: 5}} name="ios-pin" />
-													<Text style={{ fontSize: 12 }}>
-														{this.state.location !== null ? String(this.state.location.coords.longitude) + ', ' : ''}
-														{this.state.location !== null ? ' ' + String(this.state.location.coords.latitude) : ''}
-													</Text>
-												</View>
-												{/* <Text
+												<Text numberOfLines={1} note>
+													{this.props.tempObservation.time}
+												</Text>
+												<Text
 													style={{ paddingBottom: 4 }}
 													numberOfLines={1}
 													note
 												>
 													{this.props.tempObservation.lon} {this.props.tempObservation.lat}
-												</Text> */}
+												</Text>
 												<TouchableOpacity>
 													<Text style={{ color: "blue" }} note>
 														View More
-                        							</Text>
+                        </Text>
 												</TouchableOpacity>
 											</Body>
 										</ListItem>

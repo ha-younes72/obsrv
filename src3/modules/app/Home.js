@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigation } from "react-native-navigation";
-import { TouchableOpacity, Alert, Linking } from "react-native";
+import { TouchableOpacity, Alert } from "react-native";
 
 import {
   Container,
@@ -131,35 +131,19 @@ class Home extends React.Component {
                           </Left>
                           <Body style={{ paddingLeft: 10 }}>
                             <Text style={{ paddingBottom: 4 }} numberOfLines={1}>
-                              {data.activity}
+                              {data.sessionID}
                             </Text>
-                            <View style={{flexDirection: "row",}}>
-                              <Icon style={{ fontSize: 18, paddingRight: 5}} name="md-time" />
-                              <Text style={{ fontSize: 12 }}>
-                                {data.time}
-                              </Text>
-                            </View>
-                            <View style={{flexDirection: "row",}}>
-                              <Icon style={{ fontSize: 18, paddingRight: 5}} name="ios-pin" />
-                              <Text style={{ fontSize: 12 }}>
-                                {data.lat}, {data.lon}
-                              </Text>
-                            </View>
-                            <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-                              <TouchableOpacity>
-                                <Text style={{ color: "blue" }} note>
-                                  View More
-                                </Text>
-                              </TouchableOpacity>
-                              {/* <Icon style={{ fontSize: 20, justifyContent: 'flex-end', color: "#3b5998"}} name="logo-facebook" /> */}
-                              <Icon 
-                                style={{ fontSize: 20, justifyContent: 'flex-end', color: "#1da1f2"}} 
-                                name="logo-twitter" 
-                                onPress={() => 
-                                  Linking.openURL('https://twitter.com/share?text=I\'m Sharing on Twitter&url='+ data.img +'&hashtags=oceanscience')} 
-                              />
-                            </View>
-
+                            <Text numberOfLines={1} note>
+                              {/*data.date*/} {data.time}
+                            </Text>
+                            <Text style={{ paddingBottom: 4 }} numberOfLines={1} note>
+                              {data.lat} {data.lon}
+                            </Text>
+                            <TouchableOpacity>
+                              <Text style={{ color: "blue" }} note>
+                                View More
+                        </Text>
+                            </TouchableOpacity>
                           </Body>
                         </ListItem>
                       ))}
@@ -196,20 +180,18 @@ class Home extends React.Component {
                               </Left>
                               <Body style={{ paddingLeft: 10 }}>
                                 <Text style={{ paddingBottom: 4 }} numberOfLines={1}>
-                                  {data.activity}
+                                  {data.sessionID}
                                 </Text>
-                                <View style={{flexDirection: "row",}}>
-                                  <Icon style={{ fontSize: 18, paddingRight: 5}} name="md-time" />
-                                  <Text style={{ fontSize: 12 }}>
-                                    {data.time}
-                                  </Text>
-                                </View>
-                                <View style={{flexDirection: "row",}}>
-                                  <Icon style={{ fontSize: 18, paddingRight: 5}} name="ios-pin" />
-                                  <Text style={{ fontSize: 12 }}>
-                                    {data.lat}, {data.lon}
-                                  </Text>
-                                </View>
+                                <Text numberOfLines={1} note>
+                                  {data.time}
+                                </Text>
+                                <Text
+                                  style={{ paddingBottom: 4 }}
+                                  numberOfLines={1}
+                                  note
+                                >
+                                  {data.lon} {data.lat}
+                                </Text>
                                 <TouchableOpacity>
                                   <Text style={{ color: "blue" }} note>
                                     View More
@@ -314,13 +296,13 @@ class Home extends React.Component {
                   }}
                 >
                   <Text style={{ fontSize: 16 }}>
-                    Coming Soon!
+                    Facebook
                   </Text>
                   <Text style={{ fontSize: 18, color: 'blue' }}>
 
                   </Text>
                 </View>
-                {/* <View
+                <View
                   style={{
                     backgroundColor: 'white',
                     padding: 15,
@@ -355,7 +337,7 @@ class Home extends React.Component {
                   <Text style={{ fontSize: 18, color: 'blue' }}>
                     Add
                   </Text>
-                </View> */}
+                </View>
 
                 <Text style={{ fontSize: 15, color: 'gray', paddingVertical: 5, marginTop: 20 }}>
                   ACCOUNT DETAILS

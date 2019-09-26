@@ -646,10 +646,10 @@ class ObservationList extends React.Component {
 														.addPhotoTimeandLoc(
 															{
 																sessionID: 81000,
-																activity: //{
-																	this.state.selectedActivityName ? this.state.selectedActivityName : 'Not Specified',
-																	//note: this.state.note ? this.state.note : 'Not Specified',
-																//},
+																activity: {
+																	type: this.state.selectedActivityName ? this.state.selectedActivityName : 'Not Specified',
+																	note: this.state.note ? this.state.note : 'Not Specified',
+																},
 																time: this.state.time + this.state.date,
 																lon: this.state.location !== null ? this.state.location.coords.longitude : 'Not Specified',
 																lat: this.state.location !== null ? this.state.location.coords.latitude : 'Not Specified',

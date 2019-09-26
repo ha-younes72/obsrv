@@ -55,7 +55,7 @@ import styles from './styles/Home.style';
 import { iconsMap } from '../../utils/AppIcons';
 import { colors } from '../_global/theme';
 import TopNav from './components/TopNav3';
-import RNPicker from "rn-modal-picker";
+//import RNPicker from "rn-modal-picker";
 //import firebase from 'react-native-firebase';
 //import { MessageBar } from 'react-native-messages';
 //import { showMessage } from 'react-native-messages';

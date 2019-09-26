@@ -57,7 +57,8 @@ import styles from './styles/Home.style';
 import { iconsMap } from '../../utils/AppIcons';
 import { colors } from '../_global/theme';
 import TopNav from './components/TopNav2';
-import RNPicker from "rn-modal-picker";
+//import RNPicker from "rn-modal-picker";
+import SearchableDropdown from 'react-native-searchable-dropdown';
 //import firebase from 'react-native-firebase';
 //import { MessageBar } from 'react-native-messages';
 //import { showMessage } from 'react-native-messages';
@@ -159,12 +160,12 @@ class ObservationList extends React.Component {
 		//var temp = date.toLocaleString().strip;
 		fullDate = date.toDateString()//temp[1] + ' ' + temp[2] + ', '+temp[3]
 		this.setState({ date: fullDate })
-		
 
-		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+		const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 		shortDate = (date.getDate()).toString() + '/' + monthNames[date.getMonth()] + '/' + (date.getFullYear()).toString();
 		this.setState({ displayDate: shortDate })
-	
+
 		// Getting current hour from Date object.
 		hour = date.getHours();
 		// Checking if the Hour is less than equals to 11 then Set the Time format as AM.
@@ -270,26 +271,26 @@ class ObservationList extends React.Component {
 						<Button
 							last
 							active={this.state.seg === 1 ? true : false}
-							//onPress={() => this.setState({ seg: 1 })}
+						//onPress={() => this.setState({ seg: 1 })}
 						>
 							<Text>1. Scene</Text>
 						</Button>
 						<Button
 							first
 							active={this.state.seg === 2 ? true : false}
-							//onPress={() => this.state.seg >= 2 ? this.setState({ seg: 2 }) : null}
+						//onPress={() => this.state.seg >= 2 ? this.setState({ seg: 2 }) : null}
 						>
 							<Text>2. Species</Text>
 						</Button>
 						<Button
 							active={this.state.seg === 3 ? true : false}
-							//onPress={() => this.state.seg >= 3 ? this.setState({ seg: 3 }) : null}
+						//onPress={() => this.state.seg >= 3 ? this.setState({ seg: 3 }) : null}
 						>
 							<Text>3. Humans</Text>
 						</Button>
 						<Button
 							active={this.state.seg === 4 ? true : false}
-							//onPress={() => this.state.seg >= 4 ? this.setState({ seg: 4 }) : null}
+						//onPress={() => this.state.seg >= 4 ? this.setState({ seg: 4 }) : null}
 						>
 							<Text>4. Validate</Text>
 						</Button>
@@ -297,7 +298,7 @@ class ObservationList extends React.Component {
 
 					{
 						this.state.seg === 1 ?
-							<Content style={{backgroundColor: colors.gray}}
+							<Content style={{ backgroundColor: colors.gray }}
 							>
 								<ScrollView
 									showsHorizontalScrollIndicator={false}
@@ -509,18 +510,18 @@ class ObservationList extends React.Component {
 
 									</View>
 									<View style={{ flex: 1, justifyContent: 'space-between', paddingTop: 5, paddingBottom: 5 }}>
-										<View style={{flexDirection: "row",}}>
-											<Icon style={{ fontSize: 18, paddingRight: 5}} name="ios-time" />
+										<View style={{ flexDirection: "row", }}>
+											<Icon style={{ fontSize: 18, paddingRight: 5 }} name="ios-time" />
 											<Text style={{ fontSize: 12 }}>
 												{this.state.displayTime ? this.state.displayTime : ''}
 											</Text>
-										
-											<Icon style={{ fontSize: 18, paddingLeft: 8, paddingRight: 5}} name="ios-calendar" />
+
+											<Icon style={{ fontSize: 18, paddingLeft: 8, paddingRight: 5 }} name="ios-calendar" />
 											<Text style={{ fontSize: 12 }}>
 												{this.state.displayDate ? this.state.displayDate : ''}
 											</Text>
-										
-											<Icon style={{ fontSize: 18, paddingLeft: 8, paddingRight: 5}} name="ios-pin" />
+
+											<Icon style={{ fontSize: 18, paddingLeft: 8, paddingRight: 5 }} name="ios-pin" />
 											<Text style={{ fontSize: 12 }}>
 												{this.state.location !== null ? String(this.state.location.coords.longitude) + ', ' : ''}
 												{this.state.location !== null ? ' ' + String(this.state.location.coords.latitude) : ''}
@@ -648,7 +649,7 @@ class ObservationList extends React.Component {
 																sessionID: 81000,
 																activity: //{
 																	this.state.selectedActivityName ? this.state.selectedActivityName : 'Not Specified',
-																	//note: this.state.note ? this.state.note : 'Not Specified',
+																//note: this.state.note ? this.state.note : 'Not Specified',
 																//},
 																time: this.state.time + this.state.date,
 																lon: this.state.location !== null ? this.state.location.coords.longitude : 'Not Specified',
@@ -728,6 +729,50 @@ class ObservationList extends React.Component {
 											//key={index}
 											>
 												<Form style={{ flex: 4, paddingRight: 3 }}>
+													<SearchableDropdown
+														onItemSelect={(item) => {
+															const items = this.state.selectedItems;
+															items.push(item)
+															this.setState({ selectedItems: items });
+														}}
+														containerStyle={{ padding: 5 }}
+														onRemoveItem={(item, index) => {
+															const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
+															this.setState({ selectedItems: items });
+														}}
+														itemStyle={{
+															padding: 10,
+															marginTop: 2,
+															backgroundColor: '#ddd',
+															borderColor: '#bbb',
+															borderWidth: 1,
+															borderRadius: 5,
+														}}
+														itemTextStyle={{ color: '#222' }}
+														itemsContainerStyle={{ maxHeight: 140 }}
+														items={this.state.dataSource}
+														defaultIndex={2}
+														resetValue={false}
+														textInputProps={
+															{
+																placeholder: "placeholder",
+																underlineColorAndroid: "transparent",
+																style: {
+																	padding: 12,
+																	borderWidth: 1,
+																	borderColor: '#ccc',
+																	borderRadius: 5,
+																},
+																onTextChange: text => alert(text)
+															}
+														}
+														listProps={
+															{
+																nestedScrollEnabled: true,
+															}
+														}
+													/>
+													{/*
 													<RNPicker
 														dataSource={this.state.dataSource}
 														dummyDataSource={this.state.dataSource}
@@ -748,6 +793,7 @@ class ObservationList extends React.Component {
 														//dropDownImage={require("./res/ic_drop_down.png")}
 														selectedValue={(iindex, name) => this._selectedValue(index, name, iindex)}
 													/>
+													*/}
 													{/*
 													<Item regular style={{ borderRadius: 7, backgroundColor: colors.gray }}>
 														<Input
@@ -808,9 +854,9 @@ class ObservationList extends React.Component {
 										marginTop: 10
 									}}
 								>
-									
+
 									<Button
-										style={{backgroundColor: '#FFA500'}}
+										style={{ backgroundColor: '#FFA500' }}
 										onPress={() => {
 											seg = this.state.seg + 1
 											this.setState({
@@ -905,6 +951,7 @@ class ObservationList extends React.Component {
 												}}
 											>
 												<Form style={{ flex: 4, paddingRight: 3 }}>
+													{/*
 													<RNPicker
 														dataSource={this.state.hdataSource}
 														dummyDataSource={this.state.hdataSource}
@@ -925,6 +972,7 @@ class ObservationList extends React.Component {
 														//dropDownImage={require("./res/ic_drop_down.png")}
 														selectedValue={(iindex, name) => this._hselectedValue(index, name, iindex)}
 													/>
+													*/}
 													{
 														/*
 													<Item regular style={{ borderRadius: 7, backgroundColor: colors.gray }}>
@@ -986,9 +1034,9 @@ class ObservationList extends React.Component {
 										marginTop: 10
 									}}
 								>
-									
+
 									<Button
-										style={{backgroundColor: '#FFA500'}}
+										style={{ backgroundColor: '#FFA500' }}
 										onPress={() => {
 											seg = this.state.seg + 1
 											this.setState({
@@ -1073,19 +1121,19 @@ class ObservationList extends React.Component {
 													{/* {this.props.tempObservation.sessionID} */}
 													{this.state.selectedActivityName}
 												</Text>
-												<View style={{flexDirection: "row",}}>
-													<Icon style={{ fontSize: 18, paddingRight: 5}} name="md-time" />
+												<View style={{ flexDirection: "row", }}>
+													<Icon style={{ fontSize: 18, paddingRight: 5 }} name="md-time" />
 													<Text style={{ fontSize: 12 }}>
 														{this.state.displayTime ? this.state.displayTime : ''}
 													</Text>
-												
-													<Icon style={{ fontSize: 18, paddingLeft: 8, paddingRight: 5}} name="ios-calendar" />
+
+													<Icon style={{ fontSize: 18, paddingLeft: 8, paddingRight: 5 }} name="ios-calendar" />
 													<Text style={{ fontSize: 12 }}>
 														{this.state.displayDate ? this.state.displayDate : ''}
 													</Text>
 												</View>
-												<View style={{flexDirection: "row",}}>
-													<Icon style={{ fontSize: 18, paddingRight: 5}} name="ios-pin" />
+												<View style={{ flexDirection: "row", }}>
+													<Icon style={{ fontSize: 18, paddingRight: 5 }} name="ios-pin" />
 													<Text style={{ fontSize: 12 }}>
 														{this.state.location !== null ? String(this.state.location.coords.longitude) + ', ' : ''}
 														{this.state.location !== null ? ' ' + String(this.state.location.coords.latitude) : ''}

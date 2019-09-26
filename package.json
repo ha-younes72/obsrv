@@ -23,6 +23,7 @@
     "react-native-geolocation-service": "^3.0.0",
     "react-native-image-picker": "0.x.x",
     "react-native-navigation": "^2.26.3",
+    "react-native-searchable-dropdown": "^1.1.1",
     "react-native-vector-icons": "^6.6.0",
     "react-redux": "^7.1.0",
     "redux": "^4.0.4",
@@ -31,7 +32,6 @@
     "redux-logger": "^3.0.6",
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
-    "rn-modal-picker": "^0.2.3",
     "validate.js": "^0.13.1"
   },
   "devDependencies": {
